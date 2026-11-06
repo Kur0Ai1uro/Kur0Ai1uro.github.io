@@ -10,7 +10,48 @@
   <rights>All rights reserved 2026, Kur0Ai1uro</rights>
   <subtitle>幽灵小黑猫的小猫窝</subtitle>
   <title>Kur0Ai1uro Blog</title>
-  <updated>2026-10-25T05:27:00.964Z</updated>
+  <updated>2026-11-06T06:44:09.186Z</updated>
+  <entry>
+    <author>
+      <name>Kur0Ai1uro</name>
+    </author>
+    <category term="随笔" scheme="https://kur0ai1uro.github.io/categories/%E9%9A%8F%E7%AC%94/"/>
+    <category term="一些有的没的" scheme="https://kur0ai1uro.github.io/categories/%E9%9A%8F%E7%AC%94/%E4%B8%80%E4%BA%9B%E6%9C%89%E7%9A%84%E6%B2%A1%E7%9A%84/"/>
+    <category term="随笔" scheme="https://kur0ai1uro.github.io/tags/%E9%9A%8F%E7%AC%94/"/>
+    <content>
+      <![CDATA[<p>其实我很想在这里写点什么，但我发现想了半天想不出来，除了IOI&#x2F;OI&#x2F;CTF之外能在这里写什么<br>所以我想在这里写点小随笔，用来记录一些我在生活里偶然出现的<del class="mask">半发疯性质的</del>奇妙小心思<br>但介于我对某些奇奇怪怪的东西基本都抱有一定的好奇心，所以在这个栏目里出现什么东西都是很正常的<br><img                       lazyload                     src="/images/loading.svg"                     data-src="/images/%E6%9C%89%E7%9A%84%E6%B2%A1%E7%9A%84/5f10ef3866ad57dd58369b50f029a85c.jpg"                      alt="截图"                ><br>所以这一步，我先给自己建了个个人靶场来着……<br>链接在这：<br><a class="link"   href="https://ctf.xiaoyouovo.work/" >https://ctf.xiaoyouovo.work/<i class="fa-solid fa-arrow-up-right ml-[0.2em] font-light align-text-top text-[0.7em] link-icon"></i></a><br>小幽OvO::CTF！！堂堂登场！！！！<br>这里会记录一些我自己出过的题目，还有一些静态附件的复现场景<br>先这样吧，主要是不知道现在这里能写什么了</p>]]>
+    </content>
+    <id>https://kur0ai1uro.github.io/2026/10/25/%E4%B8%80%E4%BA%9B%E6%9C%89%E7%9A%84%E6%B2%A1%E7%9A%84/%E6%88%91%E5%85%B6%E5%AE%9E%E5%BE%88%E6%83%B3%E5%9C%A8%E8%BF%99%E9%87%8C%E5%86%99%E7%82%B9%E4%BB%80%E4%B9%88%EF%BC%8C%E6%89%80%E4%BB%A5%E6%88%91%E5%86%B3%E5%AE%9A%E5%86%99%E7%82%B9%E4%BB%80%E4%B9%88/</id>
+    <link href="https://kur0ai1uro.github.io/2026/10/25/%E4%B8%80%E4%BA%9B%E6%9C%89%E7%9A%84%E6%B2%A1%E7%9A%84/%E6%88%91%E5%85%B6%E5%AE%9E%E5%BE%88%E6%83%B3%E5%9C%A8%E8%BF%99%E9%87%8C%E5%86%99%E7%82%B9%E4%BB%80%E4%B9%88%EF%BC%8C%E6%89%80%E4%BB%A5%E6%88%91%E5%86%B3%E5%AE%9A%E5%86%99%E7%82%B9%E4%BB%80%E4%B9%88/"/>
+    <published>2026-10-25T06:00:22.719Z</published>
+    <summary>
+      <![CDATA[<p>其实我很想在这里写点什么，但我发现想了半天想不出来，除了IOI&#x2F;OI&#x2F;CTF之外能在这里写什么<br>所以我想在这里写点小随笔，用来记录一些我在生活里偶然出现的<del class="mask">半发疯性质的</del>奇妙小心思<br>但介于我对某些奇]]>
+    </summary>
+    <title>我其实很想在这里写点什么</title>
+    <updated>2026-11-06T06:44:09.186Z</updated>
+  </entry>
+  <entry>
+    <author>
+      <name>Kur0Ai1uro</name>
+    </author>
+    <category term="IOI/OI" scheme="https://kur0ai1uro.github.io/categories/IOI-OI/"/>
+    <category term="动态规划" scheme="https://kur0ai1uro.github.io/categories/IOI-OI/%E5%8A%A8%E6%80%81%E8%A7%84%E5%88%92/"/>
+    <category term="IOI" scheme="https://kur0ai1uro.github.io/tags/IOI/"/>
+    <category term="动态规划" scheme="https://kur0ai1uro.github.io/tags/%E5%8A%A8%E6%80%81%E8%A7%84%E5%88%92/"/>
+    <content>
+      <![CDATA[<p>书接上文，好吧(╯▽╰)作为这个分类的第一篇，这个文章压根儿就没有上文</p><hr><h1 id="C-一般模板"><a href="#C-一般模板" class="headerlink" title="C++一般模板"></a>C++一般模板</h1><h2 id="完全背包"><a href="#完全背包" class="headerlink" title="完全背包"></a>完全背包</h2><div class="code-container" data-rel="Cpp"><figure class="iseeu highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#<span class="keyword">include</span><span class="string">&lt;bits/stdc++.h&gt;</span></span></span><br><span class="line"><span class="keyword">using</span> <span class="keyword">namespace</span> std;</span><br><span class="line"><span class="function"><span class="type">int</span> <span class="title">main</span><span class="params">()</span></span>&#123;</span><br><span class="line">    <span class="type">int</span> n,W;</span><br><span class="line">    cin&gt;&gt;n&gt;&gt;W;</span><br><span class="line">    <span class="function">vector&lt;<span class="type">int</span>&gt; <span class="title">w</span><span class="params">(n<span class="number">+1</span>)</span>,<span class="title">v</span><span class="params">(n<span class="number">+1</span>)</span></span>;</span><br><span class="line">    <span class="keyword">for</span>(<span class="type">int</span> i=<span class="number">1</span>;i&lt;=n;i++)cin&gt;&gt;w[i]&gt;&gt;v[i];</span><br><span class="line">    <span class="function">vector&lt;<span class="type">int</span>&gt; <span class="title">dp</span><span class="params">(W<span class="number">+1</span>,<span class="number">0</span>)</span></span>;</span><br><span class="line">    <span class="keyword">for</span>(<span class="type">int</span> i=<span class="number">1</span>;i&lt;=n;i++)&#123;    </span><br><span class="line">        <span class="keyword">for</span>(<span class="type">int</span> j=w[i];j&lt;=W;j++)&#123;</span><br><span class="line">            dp[j]=<span class="built_in">max</span>(dp[j],dp[j-w[i]]+v[i]);</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">    cout&lt;&lt;dp[W]&lt;&lt;endl;</span><br><span class="line">    <span class="keyword">return</span> <span class="number">0</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></div><h2 id="多重背包"><a href="#多重背包" class="headerlink" title="多重背包"></a>多重背包</h2><div class="code-container" data-rel="Cpp"><figure class="iseeu highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#<span class="keyword">include</span><span class="string">&lt;bits/stdc++.h&gt;</span></span></span><br><span class="line"><span class="keyword">using</span> <span class="keyword">namespace</span> std;</span><br><span class="line"><span class="function"><span class="type">int</span> <span class="title">main</span><span class="params">()</span></span>&#123;</span><br><span class="line">    <span class="type">int</span> n,W;</span><br><span class="line">    cin&gt;&gt;n&gt;&gt;W;</span><br><span class="line">    <span class="function">vector&lt;<span class="type">int</span>&gt; <span class="title">w</span><span class="params">(n<span class="number">+1</span>)</span>,<span class="title">v</span><span class="params">(n<span class="number">+1</span>)</span>,<span class="title">c</span><span class="params">(n<span class="number">+1</span>)</span></span>;</span><br><span class="line">    <span class="keyword">for</span>(<span class="type">int</span> i=<span class="number">1</span>;i&lt;=n;i++)cin&gt;&gt;w[i]&gt;&gt;v[i]&gt;&gt;c[i];</span><br><span class="line">    <span class="function">vector&lt;<span class="type">int</span>&gt; <span class="title">dp</span><span class="params">(W<span class="number">+1</span>,<span class="number">0</span>)</span></span>;</span><br><span class="line">    <span class="keyword">for</span>(<span class="type">int</span> i=<span class="number">1</span>;i&lt;=n;i++)&#123;</span><br><span class="line">        <span class="keyword">for</span>(<span class="type">int</span> k=<span class="number">1</span>;k&lt;=c[i];k++)&#123;       </span><br><span class="line">            <span class="keyword">for</span>(<span class="type">int</span> j=w[i];j&lt;=W;j--)&#123;</span><br><span class="line">                dp[j]=<span class="built_in">max</span>(dp[j],dp[j-w[i]]+v[i]);</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">    cout&lt;&lt;dp[W]&lt;&lt;endl;</span><br><span class="line">    <span class="keyword">return</span> <span class="number">0</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></div><h2 id="0-1背包"><a href="#0-1背包" class="headerlink" title="0&#x2F;1背包"></a>0&#x2F;1背包</h2><div class="code-container" data-rel="Cpp"><figure class="iseeu highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#<span class="keyword">include</span><span class="string">&lt;bits/stdc++.h&gt;</span></span></span><br><span class="line"><span class="keyword">using</span> <span class="keyword">namespace</span> std;</span><br><span class="line"><span class="function"><span class="type">int</span> <span class="title">main</span><span class="params">()</span></span>&#123;</span><br><span class="line">    <span class="type">int</span> n,W;</span><br><span class="line">    cin&gt;&gt;n&gt;&gt;W;</span><br><span class="line">    <span class="function">vector&lt;<span class="type">int</span>&gt; <span class="title">w</span><span class="params">(n<span class="number">+1</span>)</span>,<span class="title">v</span><span class="params">(n<span class="number">+1</span>)</span></span>;</span><br><span class="line">    <span class="keyword">for</span>(<span class="type">int</span> i=<span class="number">1</span>;i&lt;=n;i++)cin&gt;&gt;w[i]&gt;&gt;v[i];</span><br><span class="line">    <span class="function">vector&lt;<span class="type">int</span>&gt; <span class="title">dp</span><span class="params">(W<span class="number">+1</span>,<span class="number">0</span>)</span></span>;</span><br><span class="line">    <span class="keyword">for</span>(<span class="type">int</span> i=<span class="number">1</span>;i&lt;=n;i++)&#123;</span><br><span class="line">        <span class="keyword">for</span>(<span class="type">int</span> j=W;j&gt;=w[i];j--)&#123;</span><br><span class="line">            dp[j]=<span class="built_in">max</span>(dp[j],dp[j-w[i]]+v[i]);</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">    cout&lt;&lt;dp[W]&lt;&lt;endl;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></div>]]>
+    </content>
+    <id>https://kur0ai1uro.github.io/2026/10/21/IOI-OI/%5BIOI-OI%5D%20%E7%AC%AC%E4%B8%80%E7%AB%99%EF%BC%9A%E8%83%8C%E5%8C%85dp/</id>
+    <link href="https://kur0ai1uro.github.io/2026/10/21/IOI-OI/%5BIOI-OI%5D%20%E7%AC%AC%E4%B8%80%E7%AB%99%EF%BC%9A%E8%83%8C%E5%8C%85dp/"/>
+    <published>2026-10-21T03:45:31.000Z</published>
+    <summary>
+      <![CDATA[<p>书接上文，好吧(╯▽╰)作为这个分类的第一篇，这个文章压根儿就没有上文</p>
+<hr>
+<h1 id="C-一般模板"><a href="#C-一般模板" class="headerlink" title="C++一般模板"></a>C++一般模板</h1><h2 id=]]>
+    </summary>
+    <title>IOI/OI 第一篇笔记：背包dp</title>
+    <updated>2026-10-25T05:26:59.424Z</updated>
+  </entry>
   <entry>
     <author>
       <name>Kur0Ai1uro</name>
@@ -31,7 +72,7 @@
                      src="/im]]>
     </summary>
     <title>2026TwinHack迎新靶场部分WP（二）</title>
-    <updated>2026-10-25T05:27:00.964Z</updated>
+    <updated>2026-11-06T06:44:57.631Z</updated>
   </entry>
   <entry>
     <author>
@@ -54,7 +95,7 @@
                      data-src="/images/2026TwinHack/P]]>
     </summary>
     <title>2026TwinHack迎新靶场部分WP</title>
-    <updated>2026-10-25T05:27:00.708Z</updated>
+    <updated>2026-11-06T06:44:57.242Z</updated>
   </entry>
   <entry>
     <author>
@@ -75,7 +116,7 @@
 <div class="code-container" data-rel="Plaintext"><figure class="iseeu highlight plaintext"]]>
     </summary>
     <title>2025GUET超链接杯决赛 - 无人生还 WP</title>
-    <updated>2026-10-25T05:26:59.786Z</updated>
+    <updated>2026-11-06T06:44:57.842Z</updated>
   </entry>
   <entry>
     <author>
@@ -93,6 +134,6 @@
       <![CDATA[<h1 id="黑猫谜一般的自我介绍"><a href="#黑猫谜一般的自我介绍" class="headerlink" title="黑猫谜一般的自我介绍"></a>黑猫谜一般的自我介绍</h1><p>首先十分感谢你能找到这个基本没什么能量的博客，初次见面，我叫<strong>]]>
     </summary>
     <title>黑猫谜一般的自我介绍</title>
-    <updated>2026-10-25T05:27:00.894Z</updated>
+    <updated>2026-10-25T05:50:29.479Z</updated>
   </entry>
 </feed>
