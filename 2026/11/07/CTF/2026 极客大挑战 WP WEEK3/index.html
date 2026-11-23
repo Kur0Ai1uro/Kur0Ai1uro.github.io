@@ -1,0 +1,1108 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="keywords" content="Hexo Theme Redefine">
+    
+    
+    <meta name="author" content="Kur0Ai1uro">
+    
+    <!-- Completely eliminate flash of wrong theme -->
+    <script>
+        (function() {
+            const THEME_KEY = "REDEFINE-THEME-STATUS";
+            const DARK = "dark", LIGHT = "light";
+            
+            // Get preferred theme
+            function getTheme() {
+                try {
+                    const saved = localStorage.getItem(THEME_KEY);
+                    if (saved) {
+                        const { isDark } = JSON.parse(saved);
+                        return isDark ? DARK : LIGHT;
+                    }
+                } catch (e) {}
+                
+                return matchMedia("(prefers-color-scheme: dark)").matches ? DARK : LIGHT;
+            }
+            
+            // Apply theme to document
+            function applyTheme(theme) {
+                const isDark = theme === DARK;
+                const root = document.documentElement;
+                
+                // Set classes for compatibility
+                root.classList.add(theme);
+                root.classList.remove(isDark ? LIGHT : DARK);
+                root.style.colorScheme = theme;
+            }
+            
+            // Initial application
+            const theme = getTheme();
+            applyTheme(theme);
+            
+            // Listen for system preference changes
+            matchMedia("(prefers-color-scheme: dark)").addEventListener("change", ({ matches }) => {
+                // Only update if using system preference (no localStorage entry)
+                if (!localStorage.getItem(THEME_KEY)) {
+                    applyTheme(matches ? DARK : LIGHT);
+                }
+            });
+            
+            // Set body classes ASAP (before DOMContentLoaded)
+            (function() {
+                const addBodyClass = () => {
+                    const b = document.body;
+                    if (!b) return false;
+                    b.classList.add(theme + "-mode");
+                    return true;
+                };
+
+                // Try immediately
+                if (addBodyClass()) return;
+
+                // Observe until body exists
+                const mo = new MutationObserver(() => {
+                    if (addBodyClass()) mo.disconnect();
+                });
+                mo.observe(document.documentElement, { childList: true, subtree: true });
+            })();
+        })();
+    </script>
+    
+    <!-- preconnect -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+
+    
+        
+        
+        
+            <link rel="preconnect" href="https://registry.npmmirror.com" crossorigin>
+        
+    
+    <!--- Seo Part-->
+    
+    <link rel="canonical" href="https://kur0ai1uro.github.io/2026/11/07/ctf/2026 极客大挑战 wp week3/"/>
+    <meta name="robots" content="index,follow">
+    <meta name="googlebot" content="index,follow">
+    <meta name="revisit-after" content="1 days">
+    
+    
+        
+        <meta name="description" content="幽灵小黑猫的小猫窝。CTF 题解、OI 笔记，和一些奇怪的栖息记录。">
+<meta property="og:type" content="article">
+<meta property="og:title" content="2026 极客大挑战 WP WEEK3">
+<meta property="og:url" content="https://kur0ai1uro.github.io/2026/11/07/CTF/2026%20%E6%9E%81%E5%AE%A2%E5%A4%A7%E6%8C%91%E6%88%98%20WP%20WEEK3/index.html">
+<meta property="og:site_name" content="Kur0Ai1uro Blog">
+<meta property="og:description" content="幽灵小黑猫的小猫窝。CTF 题解、OI 笔记，和一些奇怪的栖息记录。">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://kur0ai1uro.github.io/images/redefine-og.webp">
+<meta property="article:published_time" content="2026-11-07T04:00:00.000Z">
+<meta property="article:modified_time" content="2026-11-23T12:59:59.118Z">
+<meta property="article:author" content="Kur0Ai1uro">
+<meta property="article:tag" content="CTF">
+<meta property="article:tag" content="Writeup">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://kur0ai1uro.github.io/images/redefine-og.webp">
+    
+    
+    <!--- Icon Part-->
+    <link rel="icon" type="image/png" href="/images/redefine-favicon.svg" sizes="192x192">
+    <link rel="apple-touch-icon" sizes="180x180" href="/images/redefine-favicon.svg">
+    <meta name="theme-color" content="#A31F34">
+    <link rel="shortcut icon" href="/images/redefine-favicon.svg">
+    <!--- Page Info-->
+    
+    <title>
+        
+            2026 极客大挑战 WP WEEK3 | Kur0Ai1urolands
+        
+    </title>
+
+    <link rel="stylesheet" href="https://registry.npmmirror.com/hexo-theme-redefine/2.9.0/files/source/fonts/Chillax/chillax.css">
+
+    <!--- Inject Part-->
+    
+
+    
+<link rel="stylesheet" href="/css/style.css">
+
+
+    
+        <link rel="stylesheet" href="https://registry.npmmirror.com/hexo-theme-redefine/2.9.0/files/source/css/build/tailwind.css">
+    
+
+    <link rel="stylesheet" href="https://registry.npmmirror.com/hexo-theme-redefine/2.9.0/files/source/fonts/GeistMono/geist-mono.css">
+    <link rel="stylesheet" href="https://registry.npmmirror.com/hexo-theme-redefine/2.9.0/files/source/fonts/Geist/geist.css">
+    <!--- Font Part-->
+    
+    
+    
+    
+    
+    
+
+    <script id="hexo-configurations">
+    window.config = {"hostname":"kur0ai1uro.github.io","root":"/","language":"zh-CN","path":"search.json"};
+    window.theme = {"articles":{"style":{"font_size":"16px","line_height":1.5,"image_border_radius":"14px","image_alignment":"center","image_caption":false,"link_icon":true,"delete_mask":true,"title_alignment":"left","headings_top_spacing":{"h1":"3.2rem","h2":"2.4rem","h3":"1.9rem","h4":"1.6rem","h5":"1.4rem","h6":"1.3rem"}},"word_count":{"enable":true,"count":true,"min2read":true},"author_label":{"enable":true,"auto":false,"list":[]},"code_block":{"copy":true,"style":"mac","highlight_theme":{"light":"github","dark":"vs2015"},"font":{"enable":false,"family":null,"url":null}},"toc":{"enable":true,"max_depth":5,"number":true,"expand":true,"init_open":true},"copyright":{"enable":true,"default":"cc_by_nc_sa"},"lazyload":true,"pangu_js":true,"recommendation":{"enable":false,"title":"推荐阅读","limit":3,"mobile_limit":2,"placeholder":"/images/wallhaven-wqery6-light.webp","skip_dirs":[]}},"colors":{"primary":"#A31F34","secondary":null,"default_mode":"light"},"global":{"fonts":{"chinese":{"enable":false,"family":null,"url":null},"english":{"enable":false,"family":null,"url":null},"title":{"enable":false,"family":null,"url":null}},"content_max_width":"1000px","sidebar_width":"210px","hover":{"shadow":true,"scale":false},"scroll_progress":{"bar":false,"percentage":true},"website_counter":{"url":"https://cn.vercount.one/js","enable":true,"site_pv":true,"site_uv":true,"post_pv":true},"single_page":true,"preloader":{"enable":false,"custom_message":null},"side_tools":{"gear_rotation":true,"auto_expand":false},"open_graph":{"enable":true,"image":"/images/redefine-og.webp","description":"幽灵小黑猫的小猫窝。CTF 题解、OI 笔记，和一些奇怪的栖息记录。"},"google_analytics":{"enable":false,"id":null}},"home_banner":{"enable":true,"style":"fixed","image":{"light":"/images/wallhaven-wqery6-light.webp","dark":"/images/wallhaven-wqery6-dark.webp"},"title":"Kur0Ai1uro栖息场所","subtitle":{"text":["小笨黑猫十分奇怪的栖息地","头像是白猫你怎么叫黑猫.jpg","文字在闪？这很正常","Make Farewell More Beautiful","Rainyphilia Little Black Cat","老大我们凑这行文本真的会吸引到人来看吗","成分复杂","站在agent巨人后的怯懦小黑猫","不想上早八 也不想加班","八棱镜光彩散射器","Kur0Ai1uro{07e9f333796551ce5a88fa9ebd24851b}","直到大地变成一隅梦境","拜托了 另一个我"],"hitokoto":{"enable":false,"show_author":false,"api":"https://v1.hitokoto.cn"},"typing_speed":100,"backing_speed":80,"starting_delay":500,"backing_delay":1500,"loop":true,"smart_backspace":true},"text_color":{"light":"#fff","dark":"#d1d1b6"},"text_style":{"title_size":"2.8rem","subtitle_size":"1.5rem","line_height":1.2},"custom_font":{"enable":false,"family":null,"url":null},"social_links":{"enable":true,"style":"center","links":[{"icon":"fa-brands fa-github","url":"https://github.com/Kur0Ai1uro"},{"icon":"fa-brands fa-twitter","url":""},{"icon":"fa-solid fa-at","url":""},{"icon":"fa-brands fa-telegram","url":""},{"icon":"/images/custom-icon.svg","url":""}],"qrs":[{"icon":"fa-brands fa-weixin","qr":null},{"icon":"/images/custom-icon.svg","qr":null}]}},"plugins":{"feed":{"enable":true},"aplayer":{"enable":false,"type":"fixed","audios":[{"name":null,"artist":null,"url":null,"cover":null,"lrc":null}]},"mermaid":{"enable":true,"version":"11.4.1","theme":{"light":"default","dark":"dark"}}},"version":"2.9.0","navbar":{"auto_hide":false,"color":{"left":"#f78736","right":"#367df7","transparency":35},"width":{"home":"1200px","pages":"1000px"},"links":{"Home":{"path":"/","icon":"fa-regular fa-house"},"archives":{"path":"/archives","icon":"fa-regular fa-archive"},"categories":{"path":"/categories","icon":"fa-regular fa-folder"},"tags":{"path":"/tags","icon":"fa-regular fa-tags"},"靶场":{"path":"https://ctf.xiaoyouovo.work/","icon":"fa-regular fa-flag"}},"search":{"enable":true,"preload":true}},"page_templates":{"friends_column":2,"tags_style":"blur","masonry":{"batch_size":12,"initial_batch_size":24}},"home":{"sidebar":{"enable":true,"position":"left","first_item":"menu","announcement":null,"show_on_mobile":true,"links":{"archives":{"path":"/archives","icon":"fa-regular fa-archive"},"categories":{"path":"/categories","icon":"fa-regular fa-folder"},"tags":{"path":"/tags","icon":"fa-regular fa-tags"},"靶场":{"path":"https://ctf.xiaoyouovo.work/","icon":"fa-regular fa-flag"}}},"article_date_format":"auto","excerpt_length":200,"categories":{"enable":true,"limit":3},"tags":{"enable":true,"limit":3}},"footer":{"runtime":true,"icon":"<i class=\"fa-solid fa-heart fa-beat\" style=\"--fa-animation-duration: 0.5s; color: #f54545\"></i>","start":"2022/8/17 11:45:14","statistics":true,"customize":null,"icp":{"enable":false,"number":null,"url":null}},"footerStart":"2022/8/17 11:45:14","mermaid":{"style":{"light":"default","dark":"dark"}}};
+    window.lang_ago = {"second":"%s 秒前","minute":"%s 分钟前","hour":"%s 小时前","day":"%s 天前","week":"%s 周前","month":"%s 个月前","year":"%s 年前"};
+    window.i18n = {"search":"站内搜索您需要的内容...","toc":"目录","prev":"上一页","next":"下一页","prev_posts":"上一篇","next_posts":"下一篇","page":"第 %d 页","recent_posts":"最新文章","share":"分享","powered_by":"由 %s 驱动","theme":"主题","rss_feed":"RSS Feed","category":"分类","categories":"分类","tag":"标签","tags":"标签","post":"文章","posts":"文章","tagcloud":"标签云","comment":"评论","comments":"评论","top":"置顶","sticky":"置顶","go-back-home":"回到首页","masonry_loading":"照片加载中...","image_viewer":"图片查看器","close":"关闭","exif":{"title":"EXIF","cards":{"camera":"相机","lens":"镜头","exposure":"曝光","other":"其他"},"fields":{"make":"品牌","model":"机型","date_taken":"拍摄时间","lens_model":"镜头","focal_length":"焦距","focus_mode":"对焦模式","shutter":"快门","aperture":"光圈","iso":"感光度","exposure_program":"曝光程序","exposure_compensation":"曝光补偿","metering_mode":"测光模式","flash":"闪光灯","white_balance":"白平衡","latitude":"纬度","longitude":"经度","altitude":"海拔"},"status":{"loading":"加载中...","no_exif":"无 EXIF 信息","library_missing":"EXIF 库未加载","image_source_missing":"图片地址不可用","unavailable":"EXIF 不可用（可能被 CORS 阻止或缺少元数据）","flag_unavailable":"EXIF 不可用"}},"home":"首页","archive":"归档","archives":"归档","about":"关于","links":"链接","link":"链接","friends":"友情链接","friend":"友情链接","timeline":"时间轴","shuoshuo":"说说","bookmarks":"书签","site_uv":"访问人数","site_pv":"总访问量","read_more":"阅读全文","wordcount":"字","min2read":"分钟","changelog":"更新日志","status":"状态","runtime":"博客已运行","days":"天","hours":"小时","minutes":"分钟","seconds":"秒","optimized_by":"并由 Evan 进行优化","rights":"版权所有","site_posts":"共撰写了 %s 篇文章","site_wordcount":"共 %s 字","copyright":{"title":"标题","author":"作者","link":"链接","create_time":"创建于","update_time":"更新于","license_title":"版权声明","license_content":"本文章采用 %s 进行许可。","all_rights_reserved":"版权所有 &#169 %s，禁止转载。","public_domain":"本文为公有领域作品，可自由转载、引用。"},"ago":{"second":"%s 秒前","minute":"%s 分钟前","hour":"%s 小时前","day":"%s 天前","week":"%s 周前","month":"%s 个月前","year":"%s 年前"},"create_time":"创建","update_time":"更新","expired":"这篇文章最后更新于 %s 天前，内容可能已经过时。"};
+    window.data = {"masonry":false};
+  </script>
+    
+    <!--- Fontawesome Part-->
+    <link rel="stylesheet" href="https://registry.npmmirror.com/hexo-theme-redefine/2.9.0/files/source/fontawesome/fontawesome.min.css">
+    <link rel="stylesheet" href="https://registry.npmmirror.com/hexo-theme-redefine/2.9.0/files/source/fontawesome/brands.min.css">
+    <link rel="stylesheet" href="https://registry.npmmirror.com/hexo-theme-redefine/2.9.0/files/source/fontawesome/solid.min.css">
+    <link rel="stylesheet" href="https://registry.npmmirror.com/hexo-theme-redefine/2.9.0/files/source/fontawesome/regular.min.css">
+    
+    
+    
+    
+<meta name="generator" content="Hexo 8.1.2"><style>mjx-container[jax="SVG"] {
+  direction: ltr;
+}
+
+mjx-container[jax="SVG"] > svg {
+  overflow: visible;
+}
+
+mjx-container[jax="SVG"][display="true"] {
+  display: block;
+  text-align: center;
+  margin: 1em 0;
+}
+
+mjx-container[jax="SVG"][justify="left"] {
+  text-align: left;
+}
+
+mjx-container[jax="SVG"][justify="right"] {
+  text-align: right;
+}
+
+g[data-mml-node="merror"] > g {
+  fill: red;
+  stroke: red;
+}
+
+g[data-mml-node="merror"] > rect[data-background] {
+  fill: yellow;
+  stroke: none;
+}
+
+g[data-mml-node="mtable"] > line[data-line] {
+  stroke-width: 70px;
+  fill: none;
+}
+
+g[data-mml-node="mtable"] > rect[data-frame] {
+  stroke-width: 70px;
+  fill: none;
+}
+
+g[data-mml-node="mtable"] > .mjx-dashed {
+  stroke-dasharray: 140;
+}
+
+g[data-mml-node="mtable"] > .mjx-dotted {
+  stroke-linecap: round;
+  stroke-dasharray: 0,140;
+}
+
+g[data-mml-node="mtable"] > svg {
+  overflow: visible;
+}
+
+[jax="SVG"] mjx-tool {
+  display: inline-block;
+  position: relative;
+  width: 0;
+  height: 0;
+}
+
+[jax="SVG"] mjx-tool > mjx-tip {
+  position: absolute;
+  top: 0;
+  left: 0;
+}
+
+mjx-tool > mjx-tip {
+  display: inline-block;
+  padding: .2em;
+  border: 1px solid #888;
+  font-size: 70%;
+  background-color: #F8F8F8;
+  color: black;
+  box-shadow: 2px 2px 5px #AAAAAA;
+}
+
+g[data-mml-node="maction"][data-toggle] {
+  cursor: pointer;
+}
+
+mjx-status {
+  display: block;
+  position: fixed;
+  left: 1em;
+  bottom: 1em;
+  min-width: 25%;
+  padding: .2em .4em;
+  border: 1px solid #888;
+  font-size: 90%;
+  background-color: #F8F8F8;
+  color: black;
+}
+
+foreignObject[data-mjx-xml] {
+  font-family: initial;
+  line-height: normal;
+  overflow: visible;
+}
+
+.MathJax path {
+  stroke-width: 3;
+}
+
+mjx-container[display="true"] {
+  overflow: auto hidden;
+}
+
+mjx-container[display="true"] + br {
+  display: none;
+}
+</style><link rel="alternate" href="/atom.xml" title="Kur0Ai1uro Blog" type="application/atom+xml">
+</head>
+
+
+<body>
+	<div class="progress-bar-container">
+	
+
+	
+	<span class="pjax-progress-bar"></span>
+	<!--        <span class="swup-progress-icon">-->
+	<!--            <i class="fa-solid fa-circle-notch fa-spin"></i>-->
+	<!--        </span>-->
+	
+</div>
+
+<main class="page-container" id="swup">
+
+	
+
+	<div class="main-content-container flex flex-col justify-between min-h-dvh">
+		<div class="main-content-header">
+			<header class="navbar-container px-6 md:px-12">
+    <div class="navbar-content transition-navbar ">
+        <div class="left">
+            
+            <a class="logo-title" href="/">
+                
+                Kur0Ai1urolands
+                
+            </a>
+        </div>
+
+        <div class="right">
+            <!-- PC -->
+            <div class="desktop">
+                <ul class="navbar-list">
+                    
+                        
+                            
+
+                            <li class="navbar-item">
+                                <!-- Menu -->
+                                <a class=""
+                                   href="/"
+                                        >
+                                    <i class="fa-regular fa-house fa-fw"></i>
+                                    首页
+                                    
+                                </a>
+
+                                <!-- Submenu -->
+                                
+                            </li>
+                    
+                        
+                            
+
+                            <li class="navbar-item">
+                                <!-- Menu -->
+                                <a class=""
+                                   href="/archives"
+                                        >
+                                    <i class="fa-regular fa-archive fa-fw"></i>
+                                    归档
+                                    
+                                </a>
+
+                                <!-- Submenu -->
+                                
+                            </li>
+                    
+                        
+                            
+
+                            <li class="navbar-item">
+                                <!-- Menu -->
+                                <a class=""
+                                   href="/categories"
+                                        >
+                                    <i class="fa-regular fa-folder fa-fw"></i>
+                                    分类
+                                    
+                                </a>
+
+                                <!-- Submenu -->
+                                
+                            </li>
+                    
+                        
+                            
+
+                            <li class="navbar-item">
+                                <!-- Menu -->
+                                <a class=""
+                                   href="/tags"
+                                        >
+                                    <i class="fa-regular fa-tags fa-fw"></i>
+                                    标签
+                                    
+                                </a>
+
+                                <!-- Submenu -->
+                                
+                            </li>
+                    
+                        
+                            
+
+                            <li class="navbar-item">
+                                <!-- Menu -->
+                                <a class=""
+                                   target="_blank" rel="noopener" href="https://ctf.xiaoyouovo.work/"
+                                        >
+                                    <i class="fa-regular fa-flag fa-fw"></i>
+                                    靶场
+                                    
+                                </a>
+
+                                <!-- Submenu -->
+                                
+                            </li>
+                    
+                    
+                        <li class="navbar-item search search-popup-trigger">
+                            <i class="fa-solid fa-magnifying-glass"></i>
+                        </li>
+                    
+                </ul>
+            </div>
+            <!-- Mobile -->
+            <div class="mobile">
+                
+                    <div class="icon-item search search-popup-trigger"><i class="fa-solid fa-magnifying-glass"></i>
+                    </div>
+                
+                <div class="icon-item navbar-bar">
+                    <div class="navbar-bar-middle"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Mobile sheet -->
+    <div class="navbar-drawer h-dvh w-full absolute top-0 left-0 bg-background-color flex flex-col justify-between">
+        <ul class="drawer-navbar-list flex flex-col px-4 justify-center items-start">
+            
+                
+                    
+
+                    <li class="drawer-navbar-item text-base my-1.5 flex flex-col w-full">
+                        
+                        <a class="py-1.5 px-2 flex flex-row items-center justify-between gap-1 hover:!text-primary active:!text-primary text-2xl font-semibold group border-b border-border-color hover:border-primary w-full "
+                           href="/"
+                        >
+                            <span>
+                                首页
+                            </span>
+                            
+                                <i class="fa-regular fa-house fa-sm fa-fw"></i>
+                            
+                        </a>
+                        
+
+                        
+                    </li>
+            
+                
+                    
+
+                    <li class="drawer-navbar-item text-base my-1.5 flex flex-col w-full">
+                        
+                        <a class="py-1.5 px-2 flex flex-row items-center justify-between gap-1 hover:!text-primary active:!text-primary text-2xl font-semibold group border-b border-border-color hover:border-primary w-full "
+                           href="/archives"
+                        >
+                            <span>
+                                归档
+                            </span>
+                            
+                                <i class="fa-regular fa-archive fa-sm fa-fw"></i>
+                            
+                        </a>
+                        
+
+                        
+                    </li>
+            
+                
+                    
+
+                    <li class="drawer-navbar-item text-base my-1.5 flex flex-col w-full">
+                        
+                        <a class="py-1.5 px-2 flex flex-row items-center justify-between gap-1 hover:!text-primary active:!text-primary text-2xl font-semibold group border-b border-border-color hover:border-primary w-full "
+                           href="/categories"
+                        >
+                            <span>
+                                分类
+                            </span>
+                            
+                                <i class="fa-regular fa-folder fa-sm fa-fw"></i>
+                            
+                        </a>
+                        
+
+                        
+                    </li>
+            
+                
+                    
+
+                    <li class="drawer-navbar-item text-base my-1.5 flex flex-col w-full">
+                        
+                        <a class="py-1.5 px-2 flex flex-row items-center justify-between gap-1 hover:!text-primary active:!text-primary text-2xl font-semibold group border-b border-border-color hover:border-primary w-full "
+                           href="/tags"
+                        >
+                            <span>
+                                标签
+                            </span>
+                            
+                                <i class="fa-regular fa-tags fa-sm fa-fw"></i>
+                            
+                        </a>
+                        
+
+                        
+                    </li>
+            
+                
+                    
+
+                    <li class="drawer-navbar-item text-base my-1.5 flex flex-col w-full">
+                        
+                        <a class="py-1.5 px-2 flex flex-row items-center justify-between gap-1 hover:!text-primary active:!text-primary text-2xl font-semibold group border-b border-border-color hover:border-primary w-full "
+                           target="_blank" rel="noopener" href="https://ctf.xiaoyouovo.work/"
+                        >
+                            <span>
+                                靶场
+                            </span>
+                            
+                                <i class="fa-regular fa-flag fa-sm fa-fw"></i>
+                            
+                        </a>
+                        
+
+                        
+                    </li>
+            
+
+            
+            
+                
+                    
+                    
+                    
+                    
+            
+        </ul>
+
+        <div class="statistics flex justify-around my-2.5">
+    <a class="item tag-count-item flex flex-col justify-center items-center w-20" href="/tags">
+        <div class="number text-2xl sm:text-xl text-second-text-color font-semibold">6</div>
+        <div class="label text-third-text-color text-sm">标签</div>
+    </a>
+    <a class="item tag-count-item flex flex-col justify-center items-center w-20" href="/categories">
+        <div class="number text-2xl sm:text-xl text-second-text-color font-semibold">8</div>
+        <div class="label text-third-text-color text-sm">分类</div>
+    </a>
+    <a class="item tag-count-item flex flex-col justify-center items-center w-20" href="/archives">
+        <div class="number text-2xl sm:text-xl text-second-text-color font-semibold">12</div>
+        <div class="label text-third-text-color text-sm">文章</div>
+    </a>
+</div>
+    </div>
+
+    <div class="window-mask"></div>
+
+</header>
+
+
+		</div>
+
+		<div class="main-content-body transition-fade-up">
+			
+
+			<div class="main-content">
+				<div class="post-page-container flex relative justify-between box-border w-full h-full">
+	<div class="article-content-container">
+
+		<div class="article-title relative w-full">
+			
+			<div class="w-full flex items-center pt-6 justify-start">
+				<h1 class="article-title-regular text-second-text-color tracking-tight text-4xl md:text-6xl font-semibold px-2 sm:px-6 md:px-8 py-3">2026 极客大挑战 WP WEEK3</h1>
+			</div>
+			
+		</div>
+
+		
+		<div class="article-header flex flex-row gap-2 items-center px-2 sm:px-6 md:px-8">
+			<div class="avatar w-[46px] h-[46px] shrink-0 rounded-medium border border-border-color p-px">
+				<img src="/images/image.jpg">
+			</div>
+			<div class="info flex flex-col justify-between">
+				<div class="author flex items-center">
+					<span class="name text-default-text-color text-lg font-semibold">Kur0Ai1uro</span>
+					
+					<span class="author-label ml-1.5 text-xs px-2 py-0.5 rounded-small text-third-text-color border border-shadow-color-1">Lv2</span>
+					
+				</div>
+				<div class="meta-info">
+					<div class="article-meta-info">
+    <span class="article-date article-meta-item">
+        <i class="fa-regular fa-pen-fancy"></i>&nbsp;
+        <span class="desktop">2026-11-07 12:00</span>
+        <span class="mobile">2026-11-07 12:00</span>
+        <span class="hover-info">创建</span>
+    </span>
+    
+        <span class="article-date article-meta-item">
+            <i class="fa-regular fa-wrench"></i>&nbsp;
+            <span class="desktop">2026-11-23 20:59:59</span>
+            <span class="mobile">2026-11-23 20:59:59</span>
+            <span class="hover-info">更新</span>
+        </span>
+    
+
+    
+        <span class="article-categories article-meta-item">
+            <i class="fa-regular fa-folders"></i>&nbsp;
+            <ul>
+                
+                
+                    
+                        
+                        <li>
+                            <a href="/categories/CTF/">CTF</a>&nbsp;
+                        </li>
+                    
+                    
+                
+                    
+                        
+                            <li>></li>
+                        
+                        <li>
+                            <a href="/categories/CTF/%E4%B8%80%E4%BA%9BWP/">一些WP</a>&nbsp;
+                        </li>
+                    
+                    
+                
+            </ul>
+        </span>
+    
+    
+        <span class="article-tags article-meta-item">
+            <i class="fa-regular fa-tags"></i>&nbsp;
+            <ul>
+                
+                    <li>
+                        <a href="/tags/CTF/">CTF</a>&nbsp;
+                    </li>
+                
+                    <li>
+                        | <a href="/tags/Writeup/">Writeup</a>&nbsp;
+                    </li>
+                
+            </ul>
+        </span>
+    
+
+    
+    
+        <span class="article-wordcount article-meta-item">
+            <i class="fa-regular fa-typewriter"></i>&nbsp;<span>3.8k 字</span>
+        </span>
+    
+    
+        <span class="article-min2read article-meta-item">
+            <i class="fa-regular fa-clock"></i>&nbsp;<span>17 分钟</span>
+        </span>
+    
+    
+        <span class="article-pv article-meta-item">
+            <i class="fa-regular fa-eye"></i>&nbsp;<span id="busuanzi_value_page_pv"></span>
+        </span>
+    
+</div>
+
+				</div>
+			</div>
+		</div>
+		
+
+		
+
+
+		<div class="article-content markdown-body px-2 sm:px-6 md:px-8 pb-8">
+			<p>这一周写在前面：<br>现在的CTF已经是各种Agent的天下了，我也清楚单靠人工薄弱的力量跟迭代进化的Agent去拼是小巫见大巫，既然如此我们就不比了，因为比了也没有意义，agent的力量还是太强大了<br>与其仰仗agent的的力量，倒不如把这场比赛当做练习赛去做，自己学点东西，总比什么都不会强很多<br>随便答几题就好了，既然没有拿奖需求的话<br><img lazyload="" src="/images/loading.svg" data-src="/images/2026%E6%9E%81%E5%AE%A2%E5%A4%A7%E6%8C%91%E6%88%98/c918436a8779694580f6383b31ccd6c6.jpg" alt="截图"></p>
+<hr>
+<h1 id="Misc"><a href="#Misc" class="headerlink" title="Misc"></a>Misc</h1><h2 id="Silent-Heads"><a href="#Silent-Heads" class="headerlink" title="Silent Heads"></a>Silent Heads</h2><p>题目一上来就很抽象：多模态微调任务触发了安全告警，原模型没了，只剩下一批提交样本和第一个生成 token 的注意力轨迹<br>本地附件看着挺全，256 条样本目录 + 256 张图，但真正的东西在动态节点上，得先下实例包：</p>
+<div class="code-container" data-rel="Bash"><figure class="iseeu highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">curl -o instance.zip http://10081-ba1b5d6d-e6b0-4f64-8083-b36db00e9d89.challenge.ctfplus.cn/api/instance</span><br></pre></td></tr></table></figure></div>
+<p><del class="mask">附件里那套图就是普通的 128×128 图片，别对着图发呆</del><br>实例包里四个文件，先看<code>manifest.json</code>，它把两个硬指标直接写脸上了：</p>
+<div class="code-container" data-rel="Plaintext"><figure class="iseeu highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">carrier_count = 24      # 最终载体数</span><br><span class="line">top_sensitive_heads = 10 # 敏感证人头数</span><br><span class="line">layers = 8, heads = 16, topk = 24, shard_size = 8</span><br></pre></td></tr></table></figure></div>
+<p>这俩数字后面就是自证用的<del class="mask">没它俩我大概要多试半小时</del><br><code>profile.tcap</code>头是<code>&lt;4sBHBBBBI&gt;</code>，15字节：</p>
+<div class="code-container" data-rel="Plaintext"><figure class="iseeu highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">magic=SHD1, version, sample_count, layer_count, head_count, topk, reserved, record_count</span><br></pre></td></tr></table></figure></div>
+<p>每条记录<code>sample u16 / layer u8 / head u8 / cnt u8</code>，后面跟<code>cnt</code>组<code>(ULEB128 位置增量, u16 权重)</code>。这里两个坑：<strong>位置是逐条累加的</strong>，不是绝对位置；权重<strong>按本条总和归一化</strong>，别拿浮点比例当已知<br><code>spans.bin</code>更简单，<code>SPN1 / ver / count</code>，之后每条 6 个 u16 = <code>sample, vis_start, vis_end, usr_start, usr_end, token_count</code>，左闭右开，落在<code>VIS</code>和<code>USR</code>之外的统统算<code>SYS</code><br>于是拿到 8×16×256 的 SYS 占比矩阵，每头每样本三角色加起来≈1，符合 notes 的说法<br>notes 给的路线是「单头找分离种群，多个头一起认账」，我一开始老老实实做了 median/MAD 稳健 z + Jaccard 建图求极大团，结果全散架：</p>
+<ul>
+<li>每个敏感头只覆盖载体的一部分，不是全体，稳 z 只能切到 8 个左右</li>
+<li>污染块边界是<strong>渐变</strong>的，0.25 平滑爬到 0.29，最大间隔法根本找不到干净的切点</li>
+<li>更气人的是有一族切得<strong>无比干净</strong>的 8 样本块（L2H8、L6H13、L7H1、L5H9……），彼此几乎不重合，看着像答案，其实块大小正好等于<code>shard_size=8</code><br>按多头投票把并集取出来是 53 个，离 24 差了一个数量级，<del class="mask">这时候就知道路子错了</del><br>真正的共性不在「单个头的极端值」，而在「<strong>同一个样本在多个头里一起偏</strong>」，这就是个低秩结构。把 128×256 的 z 矩阵按列中心化，直接 SVD：</li>
+</ul>
+<div class="code-container" data-rel="Python"><figure class="iseeu highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">Z = np.zeros_like(mat)</span><br><span class="line"><span class="keyword">for</span> l <span class="keyword">in</span> <span class="built_in">range</span>(layers):</span><br><span class="line">    <span class="keyword">for</span> h <span class="keyword">in</span> <span class="built_in">range</span>(heads):</span><br><span class="line">        Z[l, h] = robust_z(mat[l, h])        <span class="comment"># 每个头内部标准化</span></span><br><span class="line">M = Z.reshape(layers * heads, -<span class="number">1</span>)</span><br><span class="line">M = M - M.mean(axis=<span class="number">0</span>, keepdims=<span class="literal">True</span>)</span><br><span class="line">U, S, Vt = np.linalg.svd(M, full_matrices=<span class="literal">False</span>)</span><br></pre></td></tr></table></figure></div>
+<p>PC1 一出来，两个数字同时落地：</p>
+<div class="code-container" data-rel="Plaintext"><figure class="iseeu highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">样本载荷（排序后）: … 64:-0.150  164:-0.135 | 208:+0.084  112:+0.081</span><br><span class="line">                                        ↑第24名      ↑第25名</span><br><span class="line">头载荷 |u|      : L6H1(0.33) L6H7(0.30) L4H0(0.29) L6H2(0.28) L4H15(0.28)</span><br><span class="line">                  L6H8(0.28) L5H11(0.27) L7H2(0.26) L7H8(0.25) L6H11(0.22) | L0H6(0.16) L1H3(0.15)</span><br></pre></td></tr></table></figure></div>
+<p>第 24 名到第 25 名一个断崖（0.135→0.084），前 10 个头到第 11 个也是断崖（0.222→0.161），<br><code>24</code>和<code>10</code>跟 manifest 完全对上，这才是判定正确的凭据<br>载荷符号还是反的，正好印证 notes 那句「有的压制 SYS、有的放大」：</p>
+<div class="code-container" data-rel="Plaintext"><figure class="iseeu highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">负向（压制）: L6H1 L6H7 L5H11 L6H11</span><br><span class="line">正向（放大）: L4H0 L6H2 L6H8 L4H15 L7H2 L7H8</span><br></pre></td></tr></table></figure></div>
+<p>顺带看一眼 PC2 和 PC3，PC2 是 L0H6/L1H3/L3H3/L3H6 那一族、PC3 是 L6H9 那一族，各自自洽但数量对不上，全是诱饵<br>24 个载体（样本下标）：</p>
+<div class="code-container" data-rel="Plaintext"><figure class="iseeu highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">1 13 33 64 73 78 80 91 93 97 109 113 131 134 135 141 164 173 187 201 210 219 236 243</span><br></pre></td></tr></table></figure></div>
+<p>每张图（包括正常图）都埋了 8 字节，没标记没校验，纯藏在 DCT 系数符号里：</p>
+<div class="code-container" data-rel="Plaintext"><figure class="iseeu highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">YCbCr → Y 通道 → 8×8 不重叠块 → DCT 系数 (3,4) → &gt;=0 记 1，&lt;0 记 0 → MSB first</span><br></pre></td></tr></table></figure></div>
+<div class="code-container" data-rel="Python"><figure class="iseeu highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">y = np.asarray(Image.<span class="built_in">open</span>(p).convert(<span class="string">"YCbCr"</span>))[:, :, <span class="number">0</span>].astype(<span class="built_in">float</span>)</span><br><span class="line">bits = [<span class="number">1</span> <span class="keyword">if</span> dctn(y[by*<span class="number">8</span>:by*<span class="number">8</span>+<span class="number">8</span>, bx*<span class="number">8</span>:bx*<span class="number">8</span>+<span class="number">8</span>] - <span class="number">128</span>, <span class="built_in">type</span>=<span class="number">2</span>, norm=<span class="string">"ortho"</span>)[<span class="number">3</span>, <span class="number">4</span>] &gt;= <span class="number">0</span> <span class="keyword">else</span> <span class="number">0</span></span><br><span class="line">        <span class="keyword">for</span> by <span class="keyword">in</span> <span class="built_in">range</span>(<span class="number">4</span>) <span class="keyword">for</span> bx <span class="keyword">in</span> <span class="built_in">range</span>(<span class="number">16</span>)]</span><br></pre></td></tr></table></figure></div>
+<p>64 bit 正好 8 字节。这里的「前 64 块」是<strong>整幅 16×16 块网格的行主序前 64 块</strong>，不是左上角 8×8 那一坨，<br>我两种都算了一遍拿去交，左上那种被节点当场拒掉，<del class="mask">等于反证了正确写法</del><br>量化权重对 DC 平移不敏感，减不减 128 结果一样，但<strong>块遍历顺序</strong>错一位结果就全废<br>24 个载体按 alias 的十六进制排序，各取 8 字节拼成 192 字节：</p>
+<div class="code-container" data-rel="Python"><figure class="iseeu highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">key   = hashlib.sha256(<span class="string">b""</span>.join(blobs)).digest()</span><br><span class="line">proof = hmac.new(key, nonce + <span class="string">b"silent-heads-v1"</span>, hashlib.sha256).hexdigest()</span><br></pre></td></tr></table></figure></div>
+<p><code>nonce</code>坑了一下，manifest 里<strong>没有</strong>这个字段，它是实例包里单独一个<code>nonce.bin</code>，32 字节；<br>盐也不是硬编码，取 manifest 的<code>proof_context</code></p>
+<div class="code-container" data-rel="Plaintext"><figure class="iseeu highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">instance_key = e3b608697ebec7c3d5d540eb0a1553df44952850a40a2ba5bfb3e32602a7257a</span><br><span class="line">proof        = df4b4dac90b410e9b464f4d8cdbb562bed6379339beb1f6f02ffd57123b53e46</span><br></pre></td></tr></table></figure></div>
+<div class="code-container" data-rel="Bash"><figure class="iseeu highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">curl -X POST http://10081-ba1b5d6d-e6b0-4f64-8083-b36db00e9d89.challenge.ctfplus.cn/api/verify -d <span class="string">'{"proof":"df4b4dac…"}'</span></span><br></pre></td></tr></table></figure></div>
+<div class="code-container" data-rel="Plaintext"><figure class="iseeu highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">{"ok":true,"flag":"SYC{36975a42-ce10-4215-a365-65eb0011acf3}"}</span><br></pre></td></tr></table></figure></div>
+<p>这题的核心不是密码学，是<strong>别信单点证据</strong>。每个头单独看都只能截到载体的一角，边界还糊着，靠阈值和投票永远拼不出 24；<br>把跨头的共性当成低秩问题去做 SVD，一个主成分就把「24 个谁」和「10 个头」一起吐出来了，还顺手把诱饵族甩到 PC2、PC3 上<br><del class="mask">另外那个 shard_size=8 是真的坏，专门勾着你往干净小种群上扑</del></p>
+<div class="code-container" data-rel="Plaintext"><figure class="iseeu highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">SYC{36975a42-ce10-4215-a365-65eb0011acf3}</span><br></pre></td></tr></table></figure></div>
+<h2 id="弦外之音"><a href="#弦外之音" class="headerlink" title="弦外之音"></a>弦外之音</h2><p>附件是 agent 的执行轨迹 + 两份规则说明，按 <code>/verify</code> 交一条链<br>规矩先记住：每个量两枚印，机密 <code>public&lt;user&lt;secret_owner</code>、完整 <code>untrusted&lt;trusted</code><br>R2 派生走 join，R4 解码不洗白；P-T 管调用决策，P-F 管 egress 的 <code>clearance</code><br>用户全程只说了句”把需要归档的那封摘要一下”，后面全是它自己加的戏<br><code>#ppd3.body</code> 是邮件正文（untrusted），四层剥壳 <code>note_buffer→mime_unpack→quote_unwrap→request_scan</code> 剥出 <code>#y3py.intent = forward</code>，R4 不给提升，剥壳不等于洗白<br><code>#10s0.manifest</code> 三步解成 <code>relay@shadowbox.example</code>，不在白名单<br><code>#ft1j.config_blob</code> 解出 <code>{"mode":"full"}</code><br>三个脏量各控一个判断：</p>
+<div class="code-container" data-rel="Plaintext"><figure class="iseeu highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">#73wk.render_mode → pred:s15  → materialize_record（全文，不是摘要）</span><br><span class="line">#y3py.intent      → pred:s30 ┐</span><br><span class="line">#nttl.recipient   → pred:s30 ┴→ digest_remote</span><br></pre></td></tr></table></figure></div>
+<p>s30 的谓词是 <code>NOT IN allowlist</code>，越界反而走外发，门控是反的<br>s12 把 <code>#6sb7.body</code> 和攻击者 URL 拼成 <code>#dlwn.payload</code>，<code>route</code> 槽声明 trusted、实际 untrusted，<code>#dlwn</code> 那枚 trusted 是伪造进来的<br>s92 整段外发：<code>payload</code> 声明 <code>user</code> 骗过 clearance、实际 <code>secret_owner</code>（P-F），撑它的 <code>pred:s30</code> 自己 untrusted（P-T）<br>唯一能降级的 <code>security_review</code> 标了 <code>policy_denied</code>，一次合法降级都没有<br>交上去 21 节点 / 3 控制边 / 19 数据边，V1—V5 一遍过：</p>
+<div class="code-container" data-rel="Plaintext"><figure class="iseeu highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">SYC{b92248b0-d912-4dd3-b489-ca52e8f4df22}</span><br><span class="line"># chain_id: 0d24db28b7a448d55a66e250298720f5</span><br></pre></td></tr></table></figure></div>
+<h1 id="Crypto"><a href="#Crypto" class="headerlink" title="Crypto"></a>Crypto</h1><h2 id="learning-with-big-erro…"><a href="#learning-with-big-erro…" class="headerlink" title="learning with big erro…"></a>learning with big erro…</h2><p>LWE实例，给了<code>data.json</code>，要恢复<code>s</code><br>从<code>data.jsom</code>中读到已知参数：<mjx-container class="MathJax" jax="SVG" overflow="overflow" display="true"><svg style="vertical-align: -0.439ex;" xmlns="http://www.w3.org/2000/svg" width="35.445ex" height="2.439ex" role="img" focusable="false" viewBox="0 -883.9 15666.9 1077.9"><g stroke="currentColor" fill="currentColor" stroke-width="0" transform="scale(1,-1)"><g data-mml-node="math" data-latex="q=2^{31}-1,E=2^{21},n=22,m=58"><g data-mml-node="mi" data-latex="q"><path data-c="1D45E" d="M372 377C352 420 321 442 280 442C215 442 158 409 109 342C63 280 40 216 40 149C40 62 90-13 173-13C209-13 245 4 282 38L241-126C238-141 229-150 215-153C210-154 197-155 174-155C168-156 164-156 162-156C153-157 148-165 148-179L148-183C151-190 157-194 165-194C184-194 244-191 263-191C282-191 345-194 364-194C378-194 385-186 385-170C385-160 375-155 356-155C338-155 313-156 313-144C313-140 314-133 317-123L452 427C452 436 447 441 438 441C420 441 382 391 372 377M340 373C349 352 354 338 354 329C354 328 353 322 351 313L327 216C308 144 299 107 298 105C279 70 224 16 176 16C137 16 117 46 117 105C117 151 148 263 162 300C181 347 225 412 280 412C307 412 327 399 340 373Z"></path></g><g data-mml-node="mo" data-latex="=" transform="translate(729.8,0)"><path data-c="3D" d="M698 367L80 367C64 367 56 359 56 344C56 329 64 321 80 321L698 321C714 321 722 329 722 344C722 356 711 367 698 367M698 179L80 179C64 179 56 171 56 156C56 141 64 133 80 133L698 133C714 133 722 141 722 156C722 169 711 179 698 179Z"></path></g><g data-mml-node="msup" data-latex="2^{31}" transform="translate(1785.6,0)"><g data-mml-node="mn" data-latex="2"><path data-c="32" d="M237 666C186 666 143 648 106 612C69 576 50 534 50 483C50 449 75 424 106 424C136 424 161 450 161 480C161 513 137 536 105 536C102 536 100 536 98 535C117 584 161 627 224 627C306 627 352 556 352 470C352 403 318 331 250 255L62 43C49 28 50 29 50 0L421 0L450 180L417 180C409 129 402 100 396 91C391 86 361 84 306 84L139 84L236 179C304 243 390 312 419 365C439 400 449 435 449 470C449 588 357 666 237 666Z"></path></g><g data-mml-node="TeXAtom" transform="translate(533,413) scale(0.707)" data-latex="{31}" data-mjx-texclass="ORD"><g data-mml-node="mn" data-latex="31"><path data-c="33" d="M303 353C369 378 431 441 431 526C431 569 410 604 369 631C333 654 292 666 246 666C201 666 162 654 127 631C88 605 68 571 68 528C68 495 90 472 122 472C154 472 176 495 176 527C176 560 157 578 119 580C145 615 186 633 242 633C302 633 332 598 332 527C332 485 324 450 309 421C282 373 245 364 183 364C171 362 165 357 165 348C165 333 172 333 192 333L235 333C310 333 348 280 348 173C348 88 317 14 241 14C176 14 128 36 99 80C134 79 160 105 160 139C160 173 135 198 101 198C62 198 42 178 42 137C42 88 64 49 108 18C147-9 193-22 244-22C301-22 350-3 393 34C436 71 457 117 457 173C457 267 383 332 303 353Z"></path><path data-c="31" d="M269 666C228 624 168 603 89 603L89 564C141 564 184 572 217 588L217 82C217 64 213 52 204 47C195 42 170 39 130 39L95 39L95 0C120 2 174 3 257 3C340 3 394 2 419 0L419 39L384 39C343 39 318 42 310 47C302 52 297 64 297 82L297 636C297 660 295 666 269 666Z" transform="translate(500,0)"></path></g></g></g><g data-mml-node="mo" data-latex="-" transform="translate(3297.9,0)"><path data-c="2212" d="M698 270L80 270C64 270 56 263 56 250C56 237 64 230 80 230L698 230C714 230 722 237 722 250C722 262 710 270 698 270Z"></path></g><g data-mml-node="mn" data-latex="1" transform="translate(4298.1,0)"><path data-c="31" d="M269 666C228 624 168 603 89 603L89 564C141 564 184 572 217 588L217 82C217 64 213 52 204 47C195 42 170 39 130 39L95 39L95 0C120 2 174 3 257 3C340 3 394 2 419 0L419 39L384 39C343 39 318 42 310 47C302 52 297 64 297 82L297 636C297 660 295 666 269 666Z"></path></g><g data-mml-node="mo" data-latex="," transform="translate(4798.1,0)"><path data-c="2C" d="M139 106C107 106 86 82 86 50C86 20 109-5 139-5C153-5 165-1 174 8L175 0C175-63 154-117 112-160C105-168 101-174 101-178C101-188 105-193 114-193C123-193 135-181 152-158C186-110 203-57 203 0C203 53 185 106 139 106Z"></path></g><g data-mml-node="mi" data-latex="E" transform="translate(5242.8,0)"><path data-c="1D438" d="M199 656C199 646 210 641 231 641C271 641 291 637 291 628C291 625 289 618 286 605L156 82C151 60 141 47 126 42C119 40 101 39 70 39C48 39 38 37 38 16C38 5 49 0 70 0L583 0C607 0 609 2 617 19L657 109C684 171 703 217 714 248C712 257 709 263 698 263C691 263 685 258 681 249C656 190 632 145 608 113C568 59 509 39 415 39L270 39C260 39 253 39 249 40C243 40 240 42 240 45C240 47 242 54 245 67L311 334L406 334C453 334 478 328 483 315C485 310 486 303 486 293C486 280 484 264 479 245C477 240 476 236 476 233C476 223 482 218 493 218C502 218 508 226 512 241L568 473C568 483 563 488 552 488C544 488 538 481 535 467C525 428 512 403 495 391C478 379 450 373 409 373L321 373L379 606C387 640 387 641 429 641L568 641C619 641 654 636 673 626C701 611 715 581 715 536C715 519 714 501 711 484C711 482 711 479 710 475L710 466C710 455 715 450 725 450C735 450 741 459 743 478L763 649C766 677 759 680 732 680L233 680C210 680 199 679 199 656Z"></path></g><g data-mml-node="mo" data-latex="=" transform="translate(6286.6,0)"><path data-c="3D" d="M698 367L80 367C64 367 56 359 56 344C56 329 64 321 80 321L698 321C714 321 722 329 722 344C722 356 711 367 698 367M698 179L80 179C64 179 56 171 56 156C56 141 64 133 80 133L698 133C714 133 722 141 722 156C722 169 711 179 698 179Z"></path></g><g data-mml-node="msup" data-latex="2^{21}" transform="translate(7342.3,0)"><g data-mml-node="mn" data-latex="2"><path data-c="32" d="M237 666C186 666 143 648 106 612C69 576 50 534 50 483C50 449 75 424 106 424C136 424 161 450 161 480C161 513 137 536 105 536C102 536 100 536 98 535C117 584 161 627 224 627C306 627 352 556 352 470C352 403 318 331 250 255L62 43C49 28 50 29 50 0L421 0L450 180L417 180C409 129 402 100 396 91C391 86 361 84 306 84L139 84L236 179C304 243 390 312 419 365C439 400 449 435 449 470C449 588 357 666 237 666Z"></path></g><g data-mml-node="TeXAtom" transform="translate(533,413) scale(0.707)" data-latex="{21}" data-mjx-texclass="ORD"><g data-mml-node="mn" data-latex="21"><path data-c="32" d="M237 666C186 666 143 648 106 612C69 576 50 534 50 483C50 449 75 424 106 424C136 424 161 450 161 480C161 513 137 536 105 536C102 536 100 536 98 535C117 584 161 627 224 627C306 627 352 556 352 470C352 403 318 331 250 255L62 43C49 28 50 29 50 0L421 0L450 180L417 180C409 129 402 100 396 91C391 86 361 84 306 84L139 84L236 179C304 243 390 312 419 365C439 400 449 435 449 470C449 588 357 666 237 666Z"></path><path data-c="31" d="M269 666C228 624 168 603 89 603L89 564C141 564 184 572 217 588L217 82C217 64 213 52 204 47C195 42 170 39 130 39L95 39L95 0C120 2 174 3 257 3C340 3 394 2 419 0L419 39L384 39C343 39 318 42 310 47C302 52 297 64 297 82L297 636C297 660 295 666 269 666Z" transform="translate(500,0)"></path></g></g></g><g data-mml-node="mo" data-latex="," transform="translate(8632.4,0)"><path data-c="2C" d="M139 106C107 106 86 82 86 50C86 20 109-5 139-5C153-5 165-1 174 8L175 0C175-63 154-117 112-160C105-168 101-174 101-178C101-188 105-193 114-193C123-193 135-181 152-158C186-110 203-57 203 0C203 53 185 106 139 106Z"></path></g><g data-mml-node="mi" data-latex="n" transform="translate(9077.1,0)"><path data-c="1D45B" d="M537 137C514 58 481 18 440 18C427 18 420 28 420 47C420 61 426 84 438 115C478 224 498 296 498 333C498 403 451 442 381 442C322 442 271 416 230 363C222 407 187 442 136 442C80 442 58 390 44 345C34 313 29 294 29 287C29 278 34 273 45 273C50 273 53 274 56 276C61 285 64 292 65 299C83 375 106 413 133 413C151 413 160 399 160 371C160 358 155 331 144 290L87 63C84 50 78 24 78 19C78-1 89-11 111-11C130-11 144-1 151 19C153 24 159 49 170 92L191 181L221 295C232 318 249 341 270 365C299 397 335 413 378 413C411 413 427 391 427 348C427 310 406 234 363 120C356 102 353 87 353 74C353 25 390-11 438-11C482-11 517 14 542 64C561 104 571 131 571 144C571 153 566 158 555 158C552 158 537 149 537 137Z"></path></g><g data-mml-node="mo" data-latex="=" transform="translate(9954.9,0)"><path data-c="3D" d="M698 367L80 367C64 367 56 359 56 344C56 329 64 321 80 321L698 321C714 321 722 329 722 344C722 356 711 367 698 367M698 179L80 179C64 179 56 171 56 156C56 141 64 133 80 133L698 133C714 133 722 141 722 156C722 169 711 179 698 179Z"></path></g><g data-mml-node="mn" data-latex="22" transform="translate(11010.7,0)"><path data-c="32" d="M237 666C186 666 143 648 106 612C69 576 50 534 50 483C50 449 75 424 106 424C136 424 161 450 161 480C161 513 137 536 105 536C102 536 100 536 98 535C117 584 161 627 224 627C306 627 352 556 352 470C352 403 318 331 250 255L62 43C49 28 50 29 50 0L421 0L450 180L417 180C409 129 402 100 396 91C391 86 361 84 306 84L139 84L236 179C304 243 390 312 419 365C439 400 449 435 449 470C449 588 357 666 237 666Z"></path><path data-c="32" d="M237 666C186 666 143 648 106 612C69 576 50 534 50 483C50 449 75 424 106 424C136 424 161 450 161 480C161 513 137 536 105 536C102 536 100 536 98 535C117 584 161 627 224 627C306 627 352 556 352 470C352 403 318 331 250 255L62 43C49 28 50 29 50 0L421 0L450 180L417 180C409 129 402 100 396 91C391 86 361 84 306 84L139 84L236 179C304 243 390 312 419 365C439 400 449 435 449 470C449 588 357 666 237 666Z" transform="translate(500,0)"></path></g><g data-mml-node="mo" data-latex="," transform="translate(12010.7,0)"><path data-c="2C" d="M139 106C107 106 86 82 86 50C86 20 109-5 139-5C153-5 165-1 174 8L175 0C175-63 154-117 112-160C105-168 101-174 101-178C101-188 105-193 114-193C123-193 135-181 152-158C186-110 203-57 203 0C203 53 185 106 139 106Z"></path></g><g data-mml-node="mi" data-latex="m" transform="translate(12455.3,0)"><path data-c="1D45A" d="M657 442C596 442 543 412 498 353C489 412 451 442 383 442C324 442 273 416 231 363C223 407 188 442 137 442C96 442 66 409 45 344C34 312 29 293 29 287C29 278 34 273 45 273C50 273 53 274 56 276C61 285 64 292 66 299C84 375 107 413 134 413C152 413 161 399 161 371C161 358 156 331 145 290L88 63C84 51 79 25 79 19C79-1 90-11 111-11C131-11 145-1 152 19C153 24 160 49 171 92L192 181L222 295C233 318 250 341 272 365C301 397 337 413 380 413C413 413 429 391 429 348C429 335 424 308 414 267L387 153C380 124 364 64 356 32C355 25 354 21 354 19C354-1 365-11 387-11C398-11 406-8 413-1C428 14 429 21 435 48L494 285C497 298 511 321 535 353C565 393 605 413 654 413C687 413 703 391 703 348C703 309 683 236 642 129C633 106 629 87 629 74C629 25 666-11 714-11C759-11 793 14 818 64C838 104 848 131 848 144C848 153 843 158 832 158C825 157 818 148 813 137C791 58 759 18 716 18C703 18 696 28 696 47C696 62 702 84 714 115C755 222 775 295 775 333C775 404 728 442 657 442Z"></path></g><g data-mml-node="mo" data-latex="=" transform="translate(13611.1,0)"><path data-c="3D" d="M698 367L80 367C64 367 56 359 56 344C56 329 64 321 80 321L698 321C714 321 722 329 722 344C722 356 711 367 698 367M698 179L80 179C64 179 56 171 56 156C56 141 64 133 80 133L698 133C714 133 722 141 722 156C722 169 711 179 698 179Z"></path></g><g data-mml-node="mn" data-latex="58" transform="translate(14666.9,0)"><path data-c="35" d="M118 315C123 315 129 319 134 326C164 371 205 393 257 393C292 393 319 373 337 332C348 305 354 264 354 209C354 146 346 102 331 76C306 35 272 14 229 14C162 14 109 62 91 114C94 113 96 114 100 114C130 114 155 137 155 167C155 198 130 219 100 219C65 219 50 200 50 163C50 63 131-22 231-22C292-22 344 0 386 44C428 88 449 141 449 202C449 260 432 310 398 353C361 400 315 423 259 423C212 423 171 408 138 378L138 556C165 548 191 544 218 544C264 544 304 555 338 578C369 597 390 616 402 634C408 642 411 648 411 651C411 661 406 666 396 666C341 645 294 634 256 634C211 634 168 643 127 662C122 664 118 665 114 665C105 665 100 656 100 637L100 345C100 324 100 315 118 315Z"></path><path data-c="38" d="M250 666C201 666 158 650 122 618C86 586 68 546 68 497C68 456 83 419 113 386C120 378 142 361 179 335C88 288 42 227 42 153C42 100 64 57 107 24C147-7 194-22 249-22C305-22 354-4 395 32C436 68 457 115 457 170C457 216 441 257 408 294C396 307 365 330 316 361C393 402 431 454 431 515C431 606 344 666 250 666M379 515C379 463 348 418 286 381L167 459C136 479 120 505 120 536C120 596 185 633 249 633C318 633 379 584 379 515M250 14C168 14 99 73 99 153C99 220 136 274 210 315L328 240C376 209 400 174 400 134C400 62 325 14 250 14Z" transform="translate(500,0)"></path></g></g></g></svg></mjx-container><br>尝试一次<strong>Kannan嵌入</strong>，构造81维格…..这计算量就算是计算机来了也没法恭维<br>那么可以减去已知明文的贡献来尝试降维，这里先试试比赛的格式SYC{…}<br>结果发现SYC{…}格式根本匹配不上，会导致偏移出现偏差<br>那就按标准格式flag{….}试一次，LLL一次就命中了…..</p>
+<div class="code-container" data-rel="Python"><figure class="iseeu highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> json, numpy <span class="keyword">as</span> np</span><br><span class="line">d = json.load(<span class="built_in">open</span>(<span class="string">'data.json'</span>))</span><br><span class="line">q, n, m, E = d[<span class="string">'q'</span>], d[<span class="string">'n'</span>], d[<span class="string">'m'</span>], d[<span class="string">'E'</span>]</span><br><span class="line">A, b = d[<span class="string">'A'</span>], d[<span class="string">'b'</span>]</span><br><span class="line">known = {<span class="number">0</span>: <span class="built_in">ord</span>(<span class="string">'f'</span>), <span class="number">1</span>: <span class="built_in">ord</span>(<span class="string">'l'</span>), <span class="number">2</span>: <span class="built_in">ord</span>(<span class="string">'a'</span>), <span class="number">3</span>: <span class="built_in">ord</span>(<span class="string">'g'</span>), <span class="number">4</span>: <span class="built_in">ord</span>(<span class="string">'{'</span>), n-<span class="number">1</span>: <span class="built_in">ord</span>(<span class="string">'}'</span>)}</span><br><span class="line">rem = [j <span class="keyword">for</span> j <span class="keyword">in</span> <span class="built_in">range</span>(n) <span class="keyword">if</span> j <span class="keyword">not</span> <span class="keyword">in</span> known]</span><br><span class="line">nn = <span class="built_in">len</span>(rem); D = m + nn + <span class="number">1</span></span><br><span class="line">bb = [b[i] - <span class="built_in">sum</span>(A[i][j]*c <span class="keyword">for</span> j, c <span class="keyword">in</span> known.items()) <span class="keyword">for</span> i <span class="keyword">in</span> <span class="built_in">range</span>(m)]</span><br><span class="line">B = []</span><br><span class="line"><span class="keyword">for</span> i <span class="keyword">in</span> <span class="built_in">range</span>(m):</span><br><span class="line">    r = np.zeros(D, dtype=np.int64); r[i] = q; B.append(r)</span><br><span class="line"><span class="keyword">for</span> t, j <span class="keyword">in</span> <span class="built_in">enumerate</span>(rem):</span><br><span class="line">    r = np.zeros(D, dtype=np.int64); r[:m] = [A[i][j] <span class="keyword">for</span> i <span class="keyword">in</span> <span class="built_in">range</span>(m)]; r[m+t] = <span class="number">1</span>; B.append(r)</span><br><span class="line">r = np.zeros(D, dtype=np.int64); r[:m] = bb; r[-<span class="number">1</span>] = <span class="number">1</span>; B.append(r)</span><br><span class="line">B = [np.array(r, dtype=np.int64) <span class="keyword">for</span> r <span class="keyword">in</span> B]</span><br><span class="line">M = np.array(B, dtype=np.float64); _, R = np.linalg.qr(M.T)</span><br><span class="line">mu = np.zeros((D, D)); bn = np.zeros(D)</span><br><span class="line"><span class="keyword">for</span> i <span class="keyword">in</span> <span class="built_in">range</span>(D):</span><br><span class="line">    mu[i, i] = <span class="number">1.0</span></span><br><span class="line">    <span class="keyword">for</span> j <span class="keyword">in</span> <span class="built_in">range</span>(i):</span><br><span class="line">        mu[i, j] = R[j, i]/R[j, j]</span><br><span class="line">    bn[i] = R[i, i]**<span class="number">2</span></span><br><span class="line">k = <span class="number">1</span></span><br><span class="line"><span class="keyword">while</span> k &lt; D:</span><br><span class="line">    <span class="keyword">for</span> j <span class="keyword">in</span> <span class="built_in">range</span>(k-<span class="number">1</span>, -<span class="number">1</span>, -<span class="number">1</span>):</span><br><span class="line">        <span class="keyword">if</span> <span class="built_in">abs</span>(mu[k, j]) &gt; <span class="number">0.5</span>:</span><br><span class="line">            r = <span class="built_in">int</span>(<span class="built_in">round</span>(mu[k, j])); B[k] -= r*B[j]</span><br><span class="line">            mu[k, :j] -= r*mu[j, :j]; mu[k, j] -= r</span><br><span class="line">    <span class="keyword">if</span> bn[k] &gt;= (<span class="number">0.99</span> - mu[k, k-<span class="number">1</span>]**<span class="number">2</span>)*bn[k-<span class="number">1</span>]:</span><br><span class="line">        k += <span class="number">1</span></span><br><span class="line">    <span class="keyword">else</span>:</span><br><span class="line">        B[k], B[k-<span class="number">1</span>] = B[k-<span class="number">1</span>], B[k]</span><br><span class="line">        mm, b1, b2 = mu[k, k-<span class="number">1</span>], bn[k-<span class="number">1</span>], bn[k]</span><br><span class="line">        nb = b2 + mm*mm*b1</span><br><span class="line">        mu[k, k-<span class="number">1</span>] = mm*b1/nb; bn[k-<span class="number">1</span>], bn[k] = nb, b1*b2/nb</span><br><span class="line">        mu[k, :k-<span class="number">1</span>], mu[k-<span class="number">1</span>, :k-<span class="number">1</span>] = mu[k-<span class="number">1</span>, :k-<span class="number">1</span>].copy(), mu[k, :k-<span class="number">1</span>].copy()</span><br><span class="line">        <span class="keyword">for</span> i <span class="keyword">in</span> <span class="built_in">range</span>(k+<span class="number">1</span>, D):</span><br><span class="line">            t = mu[i, k]</span><br><span class="line">            mu[i, k] = mu[i, k-<span class="number">1</span>] - mm*t</span><br><span class="line">            mu[i, k-<span class="number">1</span>] = t + mu[k, k-<span class="number">1</span>]*mu[i, k]</span><br><span class="line">        k = <span class="built_in">max</span>(k-<span class="number">1</span>, <span class="number">1</span>)</span><br><span class="line"><span class="keyword">for</span> v <span class="keyword">in</span> B:</span><br><span class="line">    <span class="keyword">if</span> <span class="built_in">abs</span>(<span class="built_in">int</span>(v[-<span class="number">1</span>])) != <span class="number">1</span>: <span class="keyword">continue</span></span><br><span class="line">    sec = [-<span class="built_in">int</span>(v[-<span class="number">1</span>])*<span class="built_in">int</span>(x) <span class="keyword">for</span> x <span class="keyword">in</span> v[m:m+nn]]</span><br><span class="line">    <span class="keyword">if</span> <span class="keyword">not</span> <span class="built_in">all</span>(<span class="number">32</span> &lt;= c &lt; <span class="number">127</span> <span class="keyword">for</span> c <span class="keyword">in</span> sec): <span class="keyword">continue</span></span><br><span class="line">    full = [<span class="number">0</span>]*n</span><br><span class="line">    <span class="keyword">for</span> j, c <span class="keyword">in</span> known.items(): full[j] = c</span><br><span class="line">    <span class="keyword">for</span> t, j <span class="keyword">in</span> <span class="built_in">enumerate</span>(rem): full[j] = sec[t]</span><br><span class="line">    err = [(b[i] - <span class="built_in">sum</span>(A[i][j]*full[j] <span class="keyword">for</span> j <span class="keyword">in</span> <span class="built_in">range</span>(n))) % q <span class="keyword">for</span> i <span class="keyword">in</span> <span class="built_in">range</span>(m)]</span><br><span class="line">    <span class="keyword">if</span> <span class="built_in">max</span>(<span class="built_in">min</span>(x, q-x) <span class="keyword">for</span> x <span class="keyword">in</span> err) &lt;= E:</span><br><span class="line">        <span class="built_in">print</span>(<span class="string">''</span>.join(<span class="built_in">chr</span>(c) <span class="keyword">for</span> c <span class="keyword">in</span> full))</span><br></pre></td></tr></table></figure></div>
+<p>输出明文flag：</p>
+<div class="code-container" data-rel="Plaintext"><figure class="iseeu highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">flag{0v3r_th3_r41nb0w}</span><br></pre></td></tr></table></figure></div>
+<h2 id="Prime-in-the-Noise"><a href="#Prime-in-the-Noise" class="headerlink" title="Prime in the Noise"></a>Prime in the Noise</h2><p>附件两份东西：一份生成器源码，一份藏在注释里的<code>#data</code>数据块<br>先把参数理清楚，别被源码骗了<del class="mask">（源码里那个<code>q=40961, m=26</code>是上辈子的事，实际数据块把参数全换掉了）</del></p>
+<div class="code-container" data-rel="Plaintext"><figure class="iseeu highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">n = 16, m = 7, q = 4294967311 = 2^32 + 15</span><br></pre></td></tr></table></figure></div>
+<p>结构就是标准LWE：<br><mjx-container class="MathJax" jax="SVG" overflow="overflow" display="true"><svg style="vertical-align: -0.561ex;" xmlns="http://www.w3.org/2000/svg" width="26.482ex" height="2.253ex" role="img" focusable="false" viewBox="0 -748 11704.9 996"><g stroke="currentColor" fill="currentColor" stroke-width="0" transform="scale(1,-1)"><g data-mml-node="math" data-latex="A_{7\times16}\cdot s + e \equiv b \pmod q"><g data-mml-node="msub" data-latex="A_{7\times16}"><g data-mml-node="mi" data-latex="A"><path data-c="1D434" d="M137 3C155 3 217 0 236 0C251 0 258 8 258 23C258 32 252 38 239 39C210 40 196 50 196 69C196 78 205 98 224 128C251 173 270 206 283 228L526 228C526 221 527 207 530 185C537 112 541 72 541 67C541 48 519 39 474 39C455 39 446 31 446 15C446 5 452 0 464 0C488 0 564 3 588 3C608 3 679 0 699 0C714 0 721 8 721 24C721 34 712 39 694 39C666 39 649 41 644 44C639 47 635 56 634 71L574 689C571 708 572 716 551 716C539 716 529 710 522 697L178 120C148 70 108 43 59 39C43 38 35 30 35 15C35 5 41 0 52 0C68 0 121 3 137 3M492 577L522 267L307 267Z"></path></g><g data-mml-node="TeXAtom" transform="translate(783,-150) scale(0.707)" data-latex="{7\times16}" data-mjx-texclass="ORD"><g data-mml-node="mn" data-latex="7"><path data-c="37" d="M475 604C482 613 485 626 485 644L243 644C174 644 135 648 128 657C125 660 122 667 120 676L89 676L55 464L88 464C98 520 106 550 112 555C115 558 146 560 205 560L401 560L295 410C214 295 174 171 174 36C174-3 190-22 223-22C256-22 272-3 272 36L272 87C272 239 296 349 343 416Z"></path></g><g data-mml-node="mo" data-latex="\times" transform="translate(500,0)"><path data-c="D7" d="M630 32C630 39 628 44 623 49L422 250L623 451C628 456 630 461 630 468C630 481 620 491 607 491C600 491 595 489 590 484L389 283L188 484C183 489 178 491 171 491C158 491 148 481 148 468C148 461 150 456 155 451L356 250L155 49C150 44 148 39 148 32C148 19 158 9 171 9C178 9 183 11 188 16L389 217L590 16C595 11 600 9 607 9C620 9 630 19 630 32Z"></path></g><g data-mml-node="mn" data-latex="16" transform="translate(1278,0)"><path data-c="31" d="M269 666C228 624 168 603 89 603L89 564C141 564 184 572 217 588L217 82C217 64 213 52 204 47C195 42 170 39 130 39L95 39L95 0C120 2 174 3 257 3C340 3 394 2 419 0L419 39L384 39C343 39 318 42 310 47C302 52 297 64 297 82L297 636C297 660 295 666 269 666Z"></path><path data-c="36" d="M383 504C416 504 432 521 432 555C432 627 378 666 304 666C221 666 155 627 106 548C63 480 42 403 42 316C42 189 65 100 112 47C152 1 198-22 251-22C312-22 362 1 401 47C438 91 457 144 457 205C457 266 439 318 403 361C365 407 316 431 257 431C205 431 165 402 138 346L138 352C138 465 166 561 226 605C252 624 279 633 306 633C342 633 368 623 385 602C351 602 334 583 334 553C334 525 355 504 383 504M344 340C355 317 361 272 361 206C361 141 356 98 345 76C325 35 294 14 251 14C222 14 200 24 184 44C171 60 162 74 158 85C146 116 140 163 140 227C140 255 144 282 151 308C164 355 201 399 256 399C295 399 325 379 344 340Z" transform="translate(500,0)"></path></g></g></g><g data-mml-node="mo" data-latex="\cdot" transform="translate(2666,0)"><path data-c="22C5" d="M192 250C192 279 168 303 139 303C110 303 86 279 86 250C86 221 110 197 139 197C168 197 192 221 192 250Z"></path></g><g data-mml-node="mi" data-latex="s" transform="translate(3166.2,0)"><path data-c="1D460" d="M420 354C420 411 362 442 300 442C237 442 192 423 165 385C142 352 130 322 130 295C130 242 165 208 234 193C263 188 285 181 302 173C323 164 333 147 333 123C333 105 325 85 308 62C287 33 250 18 197 18C143 18 108 33 92 62C124 61 151 87 151 119C151 144 138 157 111 157C75 157 52 124 52 88C52 22 124-11 196-11C271-11 325 11 357 56C384 93 397 126 397 156C397 199 376 231 335 252C304 263 280 270 265 273C230 282 194 285 194 328C194 381 244 413 300 413C342 413 369 400 382 375C360 371 337 352 337 327C337 306 348 295 371 295C402 295 420 323 420 354Z"></path></g><g data-mml-node="mo" data-latex="+" transform="translate(3857.5,0)"><path data-c="2B" d="M698 274L413 274L413 559C413 575 405 583 389 583C373 583 365 575 365 559L365 274L80 274C64 274 56 266 56 250C56 234 64 226 80 226L365 226L365-59C365-75 373-83 389-83C405-83 413-75 413-59L413 226L698 226C714 226 722 234 722 250C722 263 711 274 698 274Z"></path></g><g data-mml-node="mi" data-latex="e" transform="translate(4857.7,0)"><path data-c="1D452" d="M124 129C124 153 129 186 139 227L188 227C253 227 303 235 339 250C372 264 394 284 405 309C412 326 415 342 415 355C415 410 363 442 307 442C268 442 229 432 190 412C113 372 46 281 46 171C46 69 105-11 204-11C257-11 304 2 345 27C379 48 404 69 420 90C427 99 430 106 430 109C430 120 425 126 414 126C409 126 404 122 398 114C365 70 324 42 277 30C246 22 223 18 206 18C149 18 124 72 124 129M375 355C375 289 311 256 182 256L147 256C166 322 194 366 232 387C262 404 287 413 307 413C343 413 375 391 375 355Z"></path></g><g data-mml-node="mo" data-latex="\equiv" transform="translate(5601.5,0)"><path data-c="2261" d="M698 464L80 464C64 464 56 456 56 440C56 425 64 417 80 417L698 417C714 417 722 425 722 440C722 453 711 464 698 464M698 274L80 274C64 274 56 266 56 250C56 234 64 226 80 226L698 226C714 226 722 234 722 250C722 262 711 274 698 274M698 83L80 83C64 83 56 75 56 60C56 44 64 36 80 36L698 36C714 36 722 44 722 60C722 72 711 83 698 83Z"></path></g><g data-mml-node="mi" data-latex="b" transform="translate(6657.2,0)"><path data-c="1D44F" d="M281 445C245 445 209 428 174 394L243 679C241 688 238 694 226 694C193 694 120 685 107 684C92 682 84 675 84 660C84 650 93 645 112 645C131 645 157 646 157 632C157 628 152 608 143 571L63 249C52 207 47 173 47 148C47 62 93-11 175-11C240-11 297 22 347 89C392 151 415 216 415 283C415 370 364 445 281 445M279 415C318 415 337 385 337 326C337 299 331 263 319 218C297 133 268 75 233 44C213 27 194 19 175 19C134 19 114 51 114 115C114 137 119 170 129 214L151 304C154 319 159 330 165 338C204 389 242 415 279 415Z"></path></g><g data-mml-node="mspace" data-latex="\kern18mu" transform="translate(7086.2,0)"></g><g data-mml-node="mo" data-latex="(" transform="translate(8086.2,0)"><path data-c="28" d="M318-248C327-248 332-243 332-234C332-231 330-227 327-223C275-183 233-117 202-26C175 53 161 131 161 208L161 292C161 369 175 447 202 526C233 617 275 683 327 723C330 726 332 730 332 734C332 743 327 748 318 748C317 748 314 747 311 745C251 699 201 631 160 540C121 453 101 371 101 292L101 208C101 129 121 47 160-40C201-131 251-199 311-245C314-247 317-248 318-248Z"></path></g><g data-mml-node="mi" data-latex="\mmlToken{mi}{mod}" transform="translate(8475.2,0)"><path data-c="6D" d="M315 413C361 413 384 378 384 307L384 79C384 60 381 48 374 44C367 40 344 38 307 38L307 0L423 3L538 0L538 38C501 38 479 40 472 44C465 48 461 60 461 79L461 259C461 339 513 413 590 413C637 413 660 378 660 307L660 79C660 60 656 48 649 44C642 40 619 38 582 38L582 0L698 3L813 0L813 38C781 38 760 39 750 42C740 45 736 52 736 64L736 251C736 298 734 331 731 350C721 411 676 442 597 442C534 442 487 413 455 354C441 413 397 442 322 442C259 442 211 412 179 352L179 442L32 431L32 393C68 393 90 390 98 384C106 378 109 365 109 342L109 79C109 60 105 48 98 44C91 40 69 38 32 38L32 0L148 3L263 0L263 38C226 38 203 40 196 44C189 48 185 60 185 79L185 259C185 340 238 413 315 413Z"></path><path data-c="6F" d="M249-11C311-11 363 11 406 55C449 99 471 152 471 214C471 277 450 332 408 378C366 424 313 448 250 448C187 448 135 424 92 378C49 332 28 277 28 214C28 152 49 99 92 55C135 11 188-11 249-11M250 21C202 21 166 42 141 85C125 113 117 159 117 222C117 283 125 327 140 355C164 398 200 419 249 419C296 419 332 398 357 357C374 329 382 284 382 222C382 106 348 21 250 21Z" transform="translate(833,0)"></path><path data-c="64" d="M374-11L527 0L527 38C491 38 470 40 462 46C454 52 450 67 450 90L450 694L301 683L301 645C336 645 358 642 366 636C374 630 377 616 377 593L377 390C345 427 305 445 257 445C195 445 142 423 99 378C56 333 34 279 34 216C34 155 54 102 95 57C136 12 186-11 247-11C298-11 341 8 374 47M261 415C304 415 339 396 364 358C371 347 374 336 374 323L374 121C374 108 371 97 364 86C336 41 298 19 251 19C210 19 177 39 151 80C133 110 124 155 124 215C124 324 161 415 261 415Z" transform="translate(1333,0)"></path></g><g data-mml-node="mspace" data-latex="\kern 6mu" transform="translate(10364.2,0)"></g><g data-mml-node="mi" data-latex="q" transform="translate(10863.9,0)"><path data-c="1D45E" d="M372 377C352 420 321 442 280 442C215 442 158 409 109 342C63 280 40 216 40 149C40 62 90-13 173-13C209-13 245 4 282 38L241-126C238-141 229-150 215-153C210-154 197-155 174-155C168-156 164-156 162-156C153-157 148-165 148-179L148-183C151-190 157-194 165-194C184-194 244-191 263-191C282-191 345-194 364-194C378-194 385-186 385-170C385-160 375-155 356-155C338-155 313-156 313-144C313-140 314-133 317-123L452 427C452 436 447 441 438 441C420 441 382 391 372 377M340 373C349 352 354 338 354 329C354 328 353 322 351 313L327 216C308 144 299 107 298 105C279 70 224 16 176 16C137 16 117 46 117 105C117 151 148 263 162 300C181 347 225 412 280 412C307 412 327 399 340 373Z"></path></g><g data-mml-node="mo" data-latex=")" transform="translate(11315.9,0)"><path data-c="29" d="M78-245C138-199 188-131 229-40C268 47 288 129 288 208L288 292C288 371 268 453 229 540C188 631 138 699 78 745C75 747 72 748 71 748C62 748 57 743 57 734C57 730 59 726 62 723C114 683 156 617 187 526C214 447 228 369 228 292L228 208C228 131 214 53 187-26C156-117 114-183 62-223C59-227 57-231 57-234C57-243 62-248 71-248C72-248 75-247 78-245Z"></path></g></g></g></svg></mjx-container><br>其中<code>s</code>只有3<del class="mask">4个非零项，每项32bit小分片；<code>e</code>只有1</del>2个非零项，而且都小于128<br>之后把<code>s</code>的非零项按索引升序拼成一个素数<code>p</code>，<code>N=p\cdot q'</code>，<code>c=flag^e \bmod N</code><br>题面专门写了“不要尝试直接分解256-bit的<code>N</code>”，那意思很明确了：突破口在<code>s</code>身上<br>这回不上LLL<br>7个方程16个未知数，正常套路是Kannan嵌入构造降维格……但上一题那种81维的苦已经吃过了，这次先看看能不能投机<br><code>s</code>是<strong>离散稀疏</strong>的，支撑集大小<code>k ∈ {3,4}</code>，枚举量只有：<br><mjx-container class="MathJax" jax="SVG" overflow="overflow" display="true"><svg style="vertical-align: -0.561ex;" xmlns="http://www.w3.org/2000/svg" width="39.768ex" height="2.253ex" role="img" focusable="false" viewBox="0 -748 17577.3 996"><g stroke="currentColor" fill="currentColor" stroke-width="0" transform="scale(1,-1)"><g data-mml-node="math" data-latex="C(16,3)+C(16,4)=560+1820=2380"><g data-mml-node="mi" data-latex="C"><path data-c="1D436" d="M148 218C148 346 204 476 267 548C318 607 406 666 505 666C609 666 660 587 660 479C660 470 657 438 657 429C657 420 663 415 676 415C681 415 685 416 688 417C693 424 696 431 698 438L760 691C760 700 755 705 745 705C741 705 735 701 727 692L662 619C623 676 568 705 497 705C442 705 388 692 333 667C222 615 141 533 89 421C63 366 50 310 50 253C50 173 75 108 126 56C177 4 242-22 322-22C401-22 473 7 538 64C565 87 588 115 607 146C634 191 648 222 648 241C648 250 643 255 632 255C623 255 618 251 616 242C595 177 562 125 517 88C460 41 400 17 338 17C218 17 148 98 148 218Z"></path></g><g data-mml-node="mo" data-latex="(" transform="translate(760,0)"><path data-c="28" d="M318-248C327-248 332-243 332-234C332-231 330-227 327-223C275-183 233-117 202-26C175 53 161 131 161 208L161 292C161 369 175 447 202 526C233 617 275 683 327 723C330 726 332 730 332 734C332 743 327 748 318 748C317 748 314 747 311 745C251 699 201 631 160 540C121 453 101 371 101 292L101 208C101 129 121 47 160-40C201-131 251-199 311-245C314-247 317-248 318-248Z"></path></g><g data-mml-node="mn" data-latex="16" transform="translate(1149,0)"><path data-c="31" d="M269 666C228 624 168 603 89 603L89 564C141 564 184 572 217 588L217 82C217 64 213 52 204 47C195 42 170 39 130 39L95 39L95 0C120 2 174 3 257 3C340 3 394 2 419 0L419 39L384 39C343 39 318 42 310 47C302 52 297 64 297 82L297 636C297 660 295 666 269 666Z"></path><path data-c="36" d="M383 504C416 504 432 521 432 555C432 627 378 666 304 666C221 666 155 627 106 548C63 480 42 403 42 316C42 189 65 100 112 47C152 1 198-22 251-22C312-22 362 1 401 47C438 91 457 144 457 205C457 266 439 318 403 361C365 407 316 431 257 431C205 431 165 402 138 346L138 352C138 465 166 561 226 605C252 624 279 633 306 633C342 633 368 623 385 602C351 602 334 583 334 553C334 525 355 504 383 504M344 340C355 317 361 272 361 206C361 141 356 98 345 76C325 35 294 14 251 14C222 14 200 24 184 44C171 60 162 74 158 85C146 116 140 163 140 227C140 255 144 282 151 308C164 355 201 399 256 399C295 399 325 379 344 340Z" transform="translate(500,0)"></path></g><g data-mml-node="mo" data-latex="," transform="translate(2149,0)"><path data-c="2C" d="M139 106C107 106 86 82 86 50C86 20 109-5 139-5C153-5 165-1 174 8L175 0C175-63 154-117 112-160C105-168 101-174 101-178C101-188 105-193 114-193C123-193 135-181 152-158C186-110 203-57 203 0C203 53 185 106 139 106Z"></path></g><g data-mml-node="mn" data-latex="3" transform="translate(2593.7,0)"><path data-c="33" d="M303 353C369 378 431 441 431 526C431 569 410 604 369 631C333 654 292 666 246 666C201 666 162 654 127 631C88 605 68 571 68 528C68 495 90 472 122 472C154 472 176 495 176 527C176 560 157 578 119 580C145 615 186 633 242 633C302 633 332 598 332 527C332 485 324 450 309 421C282 373 245 364 183 364C171 362 165 357 165 348C165 333 172 333 192 333L235 333C310 333 348 280 348 173C348 88 317 14 241 14C176 14 128 36 99 80C134 79 160 105 160 139C160 173 135 198 101 198C62 198 42 178 42 137C42 88 64 49 108 18C147-9 193-22 244-22C301-22 350-3 393 34C436 71 457 117 457 173C457 267 383 332 303 353Z"></path></g><g data-mml-node="mo" data-latex=")" transform="translate(3093.7,0)"><path data-c="29" d="M78-245C138-199 188-131 229-40C268 47 288 129 288 208L288 292C288 371 268 453 229 540C188 631 138 699 78 745C75 747 72 748 71 748C62 748 57 743 57 734C57 730 59 726 62 723C114 683 156 617 187 526C214 447 228 369 228 292L228 208C228 131 214 53 187-26C156-117 114-183 62-223C59-227 57-231 57-234C57-243 62-248 71-248C72-248 75-247 78-245Z"></path></g><g data-mml-node="mo" data-latex="+" transform="translate(3704.9,0)"><path data-c="2B" d="M698 274L413 274L413 559C413 575 405 583 389 583C373 583 365 575 365 559L365 274L80 274C64 274 56 266 56 250C56 234 64 226 80 226L365 226L365-59C365-75 373-83 389-83C405-83 413-75 413-59L413 226L698 226C714 226 722 234 722 250C722 263 711 274 698 274Z"></path></g><g data-mml-node="mi" data-latex="C" transform="translate(4705.1,0)"><path data-c="1D436" d="M148 218C148 346 204 476 267 548C318 607 406 666 505 666C609 666 660 587 660 479C660 470 657 438 657 429C657 420 663 415 676 415C681 415 685 416 688 417C693 424 696 431 698 438L760 691C760 700 755 705 745 705C741 705 735 701 727 692L662 619C623 676 568 705 497 705C442 705 388 692 333 667C222 615 141 533 89 421C63 366 50 310 50 253C50 173 75 108 126 56C177 4 242-22 322-22C401-22 473 7 538 64C565 87 588 115 607 146C634 191 648 222 648 241C648 250 643 255 632 255C623 255 618 251 616 242C595 177 562 125 517 88C460 41 400 17 338 17C218 17 148 98 148 218Z"></path></g><g data-mml-node="mo" data-latex="(" transform="translate(5465.1,0)"><path data-c="28" d="M318-248C327-248 332-243 332-234C332-231 330-227 327-223C275-183 233-117 202-26C175 53 161 131 161 208L161 292C161 369 175 447 202 526C233 617 275 683 327 723C330 726 332 730 332 734C332 743 327 748 318 748C317 748 314 747 311 745C251 699 201 631 160 540C121 453 101 371 101 292L101 208C101 129 121 47 160-40C201-131 251-199 311-245C314-247 317-248 318-248Z"></path></g><g data-mml-node="mn" data-latex="16" transform="translate(5854.1,0)"><path data-c="31" d="M269 666C228 624 168 603 89 603L89 564C141 564 184 572 217 588L217 82C217 64 213 52 204 47C195 42 170 39 130 39L95 39L95 0C120 2 174 3 257 3C340 3 394 2 419 0L419 39L384 39C343 39 318 42 310 47C302 52 297 64 297 82L297 636C297 660 295 666 269 666Z"></path><path data-c="36" d="M383 504C416 504 432 521 432 555C432 627 378 666 304 666C221 666 155 627 106 548C63 480 42 403 42 316C42 189 65 100 112 47C152 1 198-22 251-22C312-22 362 1 401 47C438 91 457 144 457 205C457 266 439 318 403 361C365 407 316 431 257 431C205 431 165 402 138 346L138 352C138 465 166 561 226 605C252 624 279 633 306 633C342 633 368 623 385 602C351 602 334 583 334 553C334 525 355 504 383 504M344 340C355 317 361 272 361 206C361 141 356 98 345 76C325 35 294 14 251 14C222 14 200 24 184 44C171 60 162 74 158 85C146 116 140 163 140 227C140 255 144 282 151 308C164 355 201 399 256 399C295 399 325 379 344 340Z" transform="translate(500,0)"></path></g><g data-mml-node="mo" data-latex="," transform="translate(6854.1,0)"><path data-c="2C" d="M139 106C107 106 86 82 86 50C86 20 109-5 139-5C153-5 165-1 174 8L175 0C175-63 154-117 112-160C105-168 101-174 101-178C101-188 105-193 114-193C123-193 135-181 152-158C186-110 203-57 203 0C203 53 185 106 139 106Z"></path></g><g data-mml-node="mn" data-latex="4" transform="translate(7298.8,0)"><path data-c="34" d="M353 677C344 677 336 672 330 663L28 199L28 163L289 163L289 81C289 63 285 51 278 46C271 41 252 39 219 39L194 39L194 0C223 2 269 3 331 3C393 3 439 2 468 0L468 39L443 39C410 39 391 41 384 46C377 51 373 63 373 81L373 163L471 163L471 202L373 202L373 660C373 670 366 677 353 677M295 553L295 202L67 202Z"></path></g><g data-mml-node="mo" data-latex=")" transform="translate(7798.8,0)"><path data-c="29" d="M78-245C138-199 188-131 229-40C268 47 288 129 288 208L288 292C288 371 268 453 229 540C188 631 138 699 78 745C75 747 72 748 71 748C62 748 57 743 57 734C57 730 59 726 62 723C114 683 156 617 187 526C214 447 228 369 228 292L228 208C228 131 214 53 187-26C156-117 114-183 62-223C59-227 57-231 57-234C57-243 62-248 71-248C72-248 75-247 78-245Z"></path></g><g data-mml-node="mo" data-latex="=" transform="translate(8465.6,0)"><path data-c="3D" d="M698 367L80 367C64 367 56 359 56 344C56 329 64 321 80 321L698 321C714 321 722 329 722 344C722 356 711 367 698 367M698 179L80 179C64 179 56 171 56 156C56 141 64 133 80 133L698 133C714 133 722 141 722 156C722 169 711 179 698 179Z"></path></g><g data-mml-node="mn" data-latex="560" transform="translate(9521.3,0)"><path data-c="35" d="M118 315C123 315 129 319 134 326C164 371 205 393 257 393C292 393 319 373 337 332C348 305 354 264 354 209C354 146 346 102 331 76C306 35 272 14 229 14C162 14 109 62 91 114C94 113 96 114 100 114C130 114 155 137 155 167C155 198 130 219 100 219C65 219 50 200 50 163C50 63 131-22 231-22C292-22 344 0 386 44C428 88 449 141 449 202C449 260 432 310 398 353C361 400 315 423 259 423C212 423 171 408 138 378L138 556C165 548 191 544 218 544C264 544 304 555 338 578C369 597 390 616 402 634C408 642 411 648 411 651C411 661 406 666 396 666C341 645 294 634 256 634C211 634 168 643 127 662C122 664 118 665 114 665C105 665 100 656 100 637L100 345C100 324 100 315 118 315Z"></path><path data-c="36" d="M383 504C416 504 432 521 432 555C432 627 378 666 304 666C221 666 155 627 106 548C63 480 42 403 42 316C42 189 65 100 112 47C152 1 198-22 251-22C312-22 362 1 401 47C438 91 457 144 457 205C457 266 439 318 403 361C365 407 316 431 257 431C205 431 165 402 138 346L138 352C138 465 166 561 226 605C252 624 279 633 306 633C342 633 368 623 385 602C351 602 334 583 334 553C334 525 355 504 383 504M344 340C355 317 361 272 361 206C361 141 356 98 345 76C325 35 294 14 251 14C222 14 200 24 184 44C171 60 162 74 158 85C146 116 140 163 140 227C140 255 144 282 151 308C164 355 201 399 256 399C295 399 325 379 344 340Z" transform="translate(500,0)"></path><path data-c="30" d="M249-22C390-22 460 92 460 320C460 473 428 575 365 625C330 652 291 666 250 666C109 666 39 551 39 320C39 136 88-22 249-22M361 524C368 489 371 425 371 332C371 240 367 172 360 128C347 48 310 8 249 8C226 8 203 17 182 34C155 57 139 104 132 176C129 201 128 253 128 332C128 419 131 480 136 513C145 568 163 603 191 618C213 630 232 636 249 636C314 636 350 583 361 524Z" transform="translate(1000,0)"></path></g><g data-mml-node="mo" data-latex="+" transform="translate(11243.6,0)"><path data-c="2B" d="M698 274L413 274L413 559C413 575 405 583 389 583C373 583 365 575 365 559L365 274L80 274C64 274 56 266 56 250C56 234 64 226 80 226L365 226L365-59C365-75 373-83 389-83C405-83 413-75 413-59L413 226L698 226C714 226 722 234 722 250C722 263 711 274 698 274Z"></path></g><g data-mml-node="mn" data-latex="1820" transform="translate(12243.8,0)"><path data-c="31" d="M269 666C228 624 168 603 89 603L89 564C141 564 184 572 217 588L217 82C217 64 213 52 204 47C195 42 170 39 130 39L95 39L95 0C120 2 174 3 257 3C340 3 394 2 419 0L419 39L384 39C343 39 318 42 310 47C302 52 297 64 297 82L297 636C297 660 295 666 269 666Z"></path><path data-c="38" d="M250 666C201 666 158 650 122 618C86 586 68 546 68 497C68 456 83 419 113 386C120 378 142 361 179 335C88 288 42 227 42 153C42 100 64 57 107 24C147-7 194-22 249-22C305-22 354-4 395 32C436 68 457 115 457 170C457 216 441 257 408 294C396 307 365 330 316 361C393 402 431 454 431 515C431 606 344 666 250 666M379 515C379 463 348 418 286 381L167 459C136 479 120 505 120 536C120 596 185 633 249 633C318 633 379 584 379 515M250 14C168 14 99 73 99 153C99 220 136 274 210 315L328 240C376 209 400 174 400 134C400 62 325 14 250 14Z" transform="translate(500,0)"></path><path data-c="32" d="M237 666C186 666 143 648 106 612C69 576 50 534 50 483C50 449 75 424 106 424C136 424 161 450 161 480C161 513 137 536 105 536C102 536 100 536 98 535C117 584 161 627 224 627C306 627 352 556 352 470C352 403 318 331 250 255L62 43C49 28 50 29 50 0L421 0L450 180L417 180C409 129 402 100 396 91C391 86 361 84 306 84L139 84L236 179C304 243 390 312 419 365C439 400 449 435 449 470C449 588 357 666 237 666Z" transform="translate(1000,0)"></path><path data-c="30" d="M249-22C390-22 460 92 460 320C460 473 428 575 365 625C330 652 291 666 250 666C109 666 39 551 39 320C39 136 88-22 249-22M361 524C368 489 371 425 371 332C371 240 367 172 360 128C347 48 310 8 249 8C226 8 203 17 182 34C155 57 139 104 132 176C129 201 128 253 128 332C128 419 131 480 136 513C145 568 163 603 191 618C213 630 232 636 249 636C314 636 350 583 361 524Z" transform="translate(1500,0)"></path></g><g data-mml-node="mo" data-latex="=" transform="translate(14521.6,0)"><path data-c="3D" d="M698 367L80 367C64 367 56 359 56 344C56 329 64 321 80 321L698 321C714 321 722 329 722 344C722 356 711 367 698 367M698 179L80 179C64 179 56 171 56 156C56 141 64 133 80 133L698 133C714 133 722 141 722 156C722 169 711 179 698 179Z"></path></g><g data-mml-node="mn" data-latex="2380" transform="translate(15577.3,0)"><path data-c="32" d="M237 666C186 666 143 648 106 612C69 576 50 534 50 483C50 449 75 424 106 424C136 424 161 450 161 480C161 513 137 536 105 536C102 536 100 536 98 535C117 584 161 627 224 627C306 627 352 556 352 470C352 403 318 331 250 255L62 43C49 28 50 29 50 0L421 0L450 180L417 180C409 129 402 100 396 91C391 86 361 84 306 84L139 84L236 179C304 243 390 312 419 365C439 400 449 435 449 470C449 588 357 666 237 666Z"></path><path data-c="33" d="M303 353C369 378 431 441 431 526C431 569 410 604 369 631C333 654 292 666 246 666C201 666 162 654 127 631C88 605 68 571 68 528C68 495 90 472 122 472C154 472 176 495 176 527C176 560 157 578 119 580C145 615 186 633 242 633C302 633 332 598 332 527C332 485 324 450 309 421C282 373 245 364 183 364C171 362 165 357 165 348C165 333 172 333 192 333L235 333C310 333 348 280 348 173C348 88 317 14 241 14C176 14 128 36 99 80C134 79 160 105 160 139C160 173 135 198 101 198C62 198 42 178 42 137C42 88 64 49 108 18C147-9 193-22 244-22C301-22 350-3 393 34C436 71 457 117 457 173C457 267 383 332 303 353Z" transform="translate(500,0)"></path><path data-c="38" d="M250 666C201 666 158 650 122 618C86 586 68 546 68 497C68 456 83 419 113 386C120 378 142 361 179 335C88 288 42 227 42 153C42 100 64 57 107 24C147-7 194-22 249-22C305-22 354-4 395 32C436 68 457 115 457 170C457 216 441 257 408 294C396 307 365 330 316 361C393 402 431 454 431 515C431 606 344 666 250 666M379 515C379 463 348 418 286 381L167 459C136 479 120 505 120 536C120 596 185 633 249 633C318 633 379 584 379 515M250 14C168 14 99 73 99 153C99 220 136 274 210 315L328 240C376 209 400 174 400 134C400 62 325 14 250 14Z" transform="translate(1000,0)"></path><path data-c="30" d="M249-22C390-22 460 92 460 320C460 473 428 575 365 625C330 652 291 666 250 666C109 666 39 551 39 320C39 136 88-22 249-22M361 524C368 489 371 425 371 332C371 240 367 172 360 128C347 48 310 8 249 8C226 8 203 17 182 34C155 57 139 104 132 176C129 201 128 253 128 332C128 419 131 480 136 513C145 568 163 603 191 618C213 630 232 636 249 636C314 636 350 583 361 524Z" transform="translate(1500,0)"></path></g></g></g></svg></mjx-container><br>支撑集拿到手，随便挑<code>k</code>行解一个<code>k×k</code>的模<code>q</code>线性系统就完事，<code>C(7,k)</code>最多35种，加起来八万次小规模高斯消元，风扇都不带转的<br>判据才是关键：解回代全部7行，残差<br><mjx-container class="MathJax" jax="SVG" overflow="overflow" display="true"><svg style="vertical-align: -0.561ex;" xmlns="http://www.w3.org/2000/svg" width="22.7ex" height="2.253ex" role="img" focusable="false" viewBox="0 -748 10033.3 996"><g stroke="currentColor" fill="currentColor" stroke-width="0" transform="scale(1,-1)"><g data-mml-node="math" data-latex="r_i=(b_i-A_i\cdot s)\bmod q"><g data-mml-node="msub" data-latex="r_i"><g data-mml-node="mi" data-latex="r"><path data-c="1D45F" d="M436 374C436 416 395 442 351 442C302 442 261 419 227 372C217 411 183 442 136 442C95 442 65 410 44 345C34 312 29 293 29 287C29 278 34 273 45 273C50 273 53 274 56 276C61 285 64 292 65 299C83 375 106 413 133 413C150 413 159 399 159 371C159 358 154 331 144 290L87 63C84 50 78 24 78 19C78-1 89-11 110-11C130-11 143-1 150 19L169 91C180 134 187 162 190 175L221 303C223 311 231 324 244 343C271 381 302 413 351 413C363 413 373 411 382 406C352 397 337 378 337 351C337 325 351 312 378 312C411 312 436 341 436 374Z"></path></g><g data-mml-node="mi" transform="translate(484,-150) scale(0.707)" data-latex="i"><path data-c="1D456" d="M284 621C284 648 271 661 244 661C216 661 188 633 188 605C188 578 202 565 229 565C257 565 284 593 284 621M259 138C237 59 205 19 164 19C151 19 144 28 144 47C144 64 173 150 232 306C240 329 244 347 244 360C244 409 210 445 161 445C118 445 84 420 59 369C39 328 29 301 29 288C29 279 34 275 45 275C58 275 60 281 64 295C87 375 118 415 158 415C171 415 178 406 178 387C178 373 175 357 168 338C145 275 121 208 101 155C86 115 78 88 78 74C78 25 114-11 162-11C205-11 239 14 264 64C283 103 293 130 293 145C293 154 288 159 277 159C274 159 259 150 259 138Z"></path></g></g><g data-mml-node="mo" data-latex="=" transform="translate(1055.7,0)"><path data-c="3D" d="M698 367L80 367C64 367 56 359 56 344C56 329 64 321 80 321L698 321C714 321 722 329 722 344C722 356 711 367 698 367M698 179L80 179C64 179 56 171 56 156C56 141 64 133 80 133L698 133C714 133 722 141 722 156C722 169 711 179 698 179Z"></path></g><g data-mml-node="mo" data-latex="(" transform="translate(2111.5,0)"><path data-c="28" d="M318-248C327-248 332-243 332-234C332-231 330-227 327-223C275-183 233-117 202-26C175 53 161 131 161 208L161 292C161 369 175 447 202 526C233 617 275 683 327 723C330 726 332 730 332 734C332 743 327 748 318 748C317 748 314 747 311 745C251 699 201 631 160 540C121 453 101 371 101 292L101 208C101 129 121 47 160-40C201-131 251-199 311-245C314-247 317-248 318-248Z"></path></g><g data-mml-node="msub" data-latex="b_i" transform="translate(2500.5,0)"><g data-mml-node="mi" data-latex="b"><path data-c="1D44F" d="M281 445C245 445 209 428 174 394L243 679C241 688 238 694 226 694C193 694 120 685 107 684C92 682 84 675 84 660C84 650 93 645 112 645C131 645 157 646 157 632C157 628 152 608 143 571L63 249C52 207 47 173 47 148C47 62 93-11 175-11C240-11 297 22 347 89C392 151 415 216 415 283C415 370 364 445 281 445M279 415C318 415 337 385 337 326C337 299 331 263 319 218C297 133 268 75 233 44C213 27 194 19 175 19C134 19 114 51 114 115C114 137 119 170 129 214L151 304C154 319 159 330 165 338C204 389 242 415 279 415Z"></path></g><g data-mml-node="mi" transform="translate(462,-150) scale(0.707)" data-latex="i"><path data-c="1D456" d="M284 621C284 648 271 661 244 661C216 661 188 633 188 605C188 578 202 565 229 565C257 565 284 593 284 621M259 138C237 59 205 19 164 19C151 19 144 28 144 47C144 64 173 150 232 306C240 329 244 347 244 360C244 409 210 445 161 445C118 445 84 420 59 369C39 328 29 301 29 288C29 279 34 275 45 275C58 275 60 281 64 295C87 375 118 415 158 415C171 415 178 406 178 387C178 373 175 357 168 338C145 275 121 208 101 155C86 115 78 88 78 74C78 25 114-11 162-11C205-11 239 14 264 64C283 103 293 130 293 145C293 154 288 159 277 159C274 159 259 150 259 138Z"></path></g></g><g data-mml-node="mo" data-latex="-" transform="translate(3478.7,0)"><path data-c="2212" d="M698 270L80 270C64 270 56 263 56 250C56 237 64 230 80 230L698 230C714 230 722 237 722 250C722 262 710 270 698 270Z"></path></g><g data-mml-node="msub" data-latex="A_i" transform="translate(4478.9,0)"><g data-mml-node="mi" data-latex="A"><path data-c="1D434" d="M137 3C155 3 217 0 236 0C251 0 258 8 258 23C258 32 252 38 239 39C210 40 196 50 196 69C196 78 205 98 224 128C251 173 270 206 283 228L526 228C526 221 527 207 530 185C537 112 541 72 541 67C541 48 519 39 474 39C455 39 446 31 446 15C446 5 452 0 464 0C488 0 564 3 588 3C608 3 679 0 699 0C714 0 721 8 721 24C721 34 712 39 694 39C666 39 649 41 644 44C639 47 635 56 634 71L574 689C571 708 572 716 551 716C539 716 529 710 522 697L178 120C148 70 108 43 59 39C43 38 35 30 35 15C35 5 41 0 52 0C68 0 121 3 137 3M492 577L522 267L307 267Z"></path></g><g data-mml-node="mi" transform="translate(783,-150) scale(0.707)" data-latex="i"><path data-c="1D456" d="M284 621C284 648 271 661 244 661C216 661 188 633 188 605C188 578 202 565 229 565C257 565 284 593 284 621M259 138C237 59 205 19 164 19C151 19 144 28 144 47C144 64 173 150 232 306C240 329 244 347 244 360C244 409 210 445 161 445C118 445 84 420 59 369C39 328 29 301 29 288C29 279 34 275 45 275C58 275 60 281 64 295C87 375 118 415 158 415C171 415 178 406 178 387C178 373 175 357 168 338C145 275 121 208 101 155C86 115 78 88 78 74C78 25 114-11 162-11C205-11 239 14 264 64C283 103 293 130 293 145C293 154 288 159 277 159C274 159 259 150 259 138Z"></path></g></g><g data-mml-node="mo" data-latex="\cdot" transform="translate(5778.1,0)"><path data-c="22C5" d="M192 250C192 279 168 303 139 303C110 303 86 279 86 250C86 221 110 197 139 197C168 197 192 221 192 250Z"></path></g><g data-mml-node="mi" data-latex="s" transform="translate(6278.3,0)"><path data-c="1D460" d="M420 354C420 411 362 442 300 442C237 442 192 423 165 385C142 352 130 322 130 295C130 242 165 208 234 193C263 188 285 181 302 173C323 164 333 147 333 123C333 105 325 85 308 62C287 33 250 18 197 18C143 18 108 33 92 62C124 61 151 87 151 119C151 144 138 157 111 157C75 157 52 124 52 88C52 22 124-11 196-11C271-11 325 11 357 56C384 93 397 126 397 156C397 199 376 231 335 252C304 263 280 270 265 273C230 282 194 285 194 328C194 381 244 413 300 413C342 413 369 400 382 375C360 371 337 352 337 327C337 306 348 295 371 295C402 295 420 323 420 354Z"></path></g><g data-mml-node="mo" data-latex=")" transform="translate(6747.3,0)"><path data-c="29" d="M78-245C138-199 188-131 229-40C268 47 288 129 288 208L288 292C288 371 268 453 229 540C188 631 138 699 78 745C75 747 72 748 71 748C62 748 57 743 57 734C57 730 59 726 62 723C114 683 156 617 187 526C214 447 228 369 228 292L228 208C228 131 214 53 187-26C156-117 114-183 62-223C59-227 57-231 57-234C57-243 62-248 71-248C72-248 75-247 78-245Z"></path></g><g data-mml-node="mo" data-latex="\mmlToken{mo}[lspace=&quot;0.278em&quot; rspace=&quot;0.278em&quot;]{mod}" transform="translate(7414.3,0)"><path data-c="6D" d="M315 413C361 413 384 378 384 307L384 79C384 60 381 48 374 44C367 40 344 38 307 38L307 0L423 3L538 0L538 38C501 38 479 40 472 44C465 48 461 60 461 79L461 259C461 339 513 413 590 413C637 413 660 378 660 307L660 79C660 60 656 48 649 44C642 40 619 38 582 38L582 0L698 3L813 0L813 38C781 38 760 39 750 42C740 45 736 52 736 64L736 251C736 298 734 331 731 350C721 411 676 442 597 442C534 442 487 413 455 354C441 413 397 442 322 442C259 442 211 412 179 352L179 442L32 431L32 393C68 393 90 390 98 384C106 378 109 365 109 342L109 79C109 60 105 48 98 44C91 40 69 38 32 38L32 0L148 3L263 0L263 38C226 38 203 40 196 44C189 48 185 60 185 79L185 259C185 340 238 413 315 413Z"></path><path data-c="6F" d="M249-11C311-11 363 11 406 55C449 99 471 152 471 214C471 277 450 332 408 378C366 424 313 448 250 448C187 448 135 424 92 378C49 332 28 277 28 214C28 152 49 99 92 55C135 11 188-11 249-11M250 21C202 21 166 42 141 85C125 113 117 159 117 222C117 283 125 327 140 355C164 398 200 419 249 419C296 419 332 398 357 357C374 329 382 284 382 222C382 106 348 21 250 21Z" transform="translate(833,0)"></path><path data-c="64" d="M374-11L527 0L527 38C491 38 470 40 462 46C454 52 450 67 450 90L450 694L301 683L301 645C336 645 358 642 366 636C374 630 377 616 377 593L377 390C345 427 305 445 257 445C195 445 142 423 99 378C56 333 34 279 34 216C34 155 54 102 95 57C136 12 186-11 247-11C298-11 341 8 374 47M261 415C304 415 339 396 364 358C371 347 374 336 374 323L374 121C374 108 371 97 364 86C336 41 298 19 251 19C210 19 177 39 151 80C133 110 124 155 124 215C124 324 161 415 261 415Z" transform="translate(1333,0)"></path></g><g data-mml-node="mi" data-latex="q" transform="translate(9581.3,0)"><path data-c="1D45E" d="M372 377C352 420 321 442 280 442C215 442 158 409 109 342C63 280 40 216 40 149C40 62 90-13 173-13C209-13 245 4 282 38L241-126C238-141 229-150 215-153C210-154 197-155 174-155C168-156 164-156 162-156C153-157 148-165 148-179L148-183C151-190 157-194 165-194C184-194 244-191 263-191C282-191 345-194 364-194C378-194 385-186 385-170C385-160 375-155 356-155C338-155 313-156 313-144C313-140 314-133 317-123L452 427C452 436 447 441 438 441C420 441 382 391 372 377M340 373C349 352 354 338 354 329C354 328 353 322 351 313L327 216C308 144 299 107 298 105C279 70 224 16 176 16C137 16 117 46 117 105C117 151 148 263 162 300C181 347 225 412 280 412C307 412 327 399 340 373Z"></path></g></g></g></svg></mjx-container><br>必须满足<strong>非零项不超过2个，且都在<code>[1,127]</code>范围内</strong><br>这个约束强得离谱，一旦对上基本就是唯一解，剩下两千多种组合全被筛掉<br>顺手再加一条分片必须<code>0 &lt; v &lt; 2^32</code>，提前剪枝</p>
+<div class="code-container" data-rel="Python"><figure class="iseeu highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> itertools</span><br><span class="line">Q = <span class="number">4294967311</span></span><br><span class="line">A = [...]   <span class="comment"># 7x16</span></span><br><span class="line">b = [...]   <span class="comment"># 7</span></span><br><span class="line">N, E, C = ..., <span class="number">65537</span>, ...</span><br><span class="line"></span><br><span class="line"><span class="keyword">def</span> <span class="title function_">solve_sq</span>(<span class="params">rows, cols</span>):</span><br><span class="line">    k = <span class="built_in">len</span>(rows)</span><br><span class="line">    mat = [[A[r][c] % Q <span class="keyword">for</span> c <span class="keyword">in</span> cols] + [b[r] % Q] <span class="keyword">for</span> r <span class="keyword">in</span> rows]</span><br><span class="line">    <span class="keyword">for</span> i <span class="keyword">in</span> <span class="built_in">range</span>(k):</span><br><span class="line">        piv = <span class="built_in">next</span>((r <span class="keyword">for</span> r <span class="keyword">in</span> <span class="built_in">range</span>(i, k) <span class="keyword">if</span> mat[r][i] % Q), <span class="literal">None</span>)</span><br><span class="line">        <span class="keyword">if</span> piv <span class="keyword">is</span> <span class="literal">None</span>:</span><br><span class="line">            <span class="keyword">return</span> <span class="literal">None</span></span><br><span class="line">        mat[i], mat[piv] = mat[piv], mat[i]</span><br><span class="line">        inv = <span class="built_in">pow</span>(mat[i][i], -<span class="number">1</span>, Q)</span><br><span class="line">        mat[i] = [x * inv % Q <span class="keyword">for</span> x <span class="keyword">in</span> mat[i]]</span><br><span class="line">        <span class="keyword">for</span> r <span class="keyword">in</span> <span class="built_in">range</span>(k):</span><br><span class="line">            <span class="keyword">if</span> r != i <span class="keyword">and</span> mat[r][i]:</span><br><span class="line">                f = mat[r][i]</span><br><span class="line">                mat[r] = [(x - f * y) % Q <span class="keyword">for</span> x, y <span class="keyword">in</span> <span class="built_in">zip</span>(mat[r], mat[i])]</span><br><span class="line">    <span class="keyword">return</span> [mat[i][k] <span class="keyword">for</span> i <span class="keyword">in</span> <span class="built_in">range</span>(k)]</span><br><span class="line"></span><br><span class="line"><span class="keyword">for</span> k <span class="keyword">in</span> (<span class="number">3</span>, <span class="number">4</span>):</span><br><span class="line">    <span class="keyword">for</span> cols <span class="keyword">in</span> itertools.combinations(<span class="built_in">range</span>(<span class="number">16</span>), k):</span><br><span class="line">        <span class="keyword">for</span> rows <span class="keyword">in</span> itertools.combinations(<span class="built_in">range</span>(<span class="number">7</span>), k):</span><br><span class="line">            sol = solve_sq(rows, cols)</span><br><span class="line">            <span class="keyword">if</span> sol <span class="keyword">is</span> <span class="literal">None</span> <span class="keyword">or</span> <span class="built_in">any</span>(x == <span class="number">0</span> <span class="keyword">or</span> x &gt;&gt; <span class="number">32</span> <span class="keyword">for</span> x <span class="keyword">in</span> sol):</span><br><span class="line">                <span class="keyword">continue</span></span><br><span class="line">            res = [(b[i] - <span class="built_in">sum</span>(A[i][c] * v <span class="keyword">for</span> c, v <span class="keyword">in</span> <span class="built_in">zip</span>(cols, sol))) % Q <span class="keyword">for</span> i <span class="keyword">in</span> <span class="built_in">range</span>(<span class="number">7</span>)]</span><br><span class="line">            nz = [r <span class="keyword">for</span> r <span class="keyword">in</span> res <span class="keyword">if</span> r]</span><br><span class="line">            <span class="keyword">if</span> <span class="built_in">len</span>(nz) &lt;= <span class="number">2</span> <span class="keyword">and</span> <span class="built_in">all</span>(<span class="number">0</span> &lt; r &lt; <span class="number">128</span> <span class="keyword">for</span> r <span class="keyword">in</span> nz):</span><br><span class="line">                p = <span class="number">0</span></span><br><span class="line">                <span class="keyword">for</span> v <span class="keyword">in</span> sol:            <span class="comment"># cols已升序，第一个进高位</span></span><br><span class="line">                    p = (p &lt;&lt; <span class="number">32</span>) | v</span><br><span class="line">                <span class="keyword">if</span> N % p == <span class="number">0</span>:</span><br><span class="line">                    qq = N // p</span><br><span class="line">                    d = <span class="built_in">pow</span>(E, -<span class="number">1</span>, (p - <span class="number">1</span>) * (qq - <span class="number">1</span>))</span><br><span class="line">                    <span class="built_in">print</span>(<span class="built_in">pow</span>(C, d, N).to_bytes(<span class="number">64</span>, <span class="string">"big"</span>).rstrip(<span class="string">b"\0"</span>))</span><br></pre></td></tr></table></figure></div>
+<p>跑完只有一组活下来，支撑集是<code>{0, 3, 4, 15}</code>：</p>
+<div class="code-container" data-rel="Plaintext"><figure class="iseeu highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">idx :   0           3           4           15</span><br><span class="line">s   : 2906659381  4055960841   897712944  1819142655</span><br></pre></td></tr></table></figure></div>
+<p>残差落在第0行和第6行，值分别是60和54——正好就是那2个噪声位，跟源码里<code>randrange(1,128)</code>对得上，说明解没歪<br>拼接规则是<strong>索引小的进高位</strong>，得到：</p>
+<div class="code-container" data-rel="Plaintext"><figure class="iseeu highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">p  = 230289281886298254790795894979591793151</span><br><span class="line">q' = 259183150370439503327100111062587137773</span><br><span class="line">p * q' == N   ✓</span><br></pre></td></tr></table></figure></div>
+<p>剩下就是普通的RSA，算私钥解密：</p>
+<div class="code-container" data-rel="Python"><figure class="iseeu highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">d = <span class="built_in">pow</span>(E, -<span class="number">1</span>, (p - <span class="number">1</span>) * (qq - <span class="number">1</span>))</span><br><span class="line"><span class="built_in">print</span>(<span class="built_in">pow</span>(C, d, N).to_bytes(<span class="number">64</span>, <span class="string">"big"</span>).rstrip(<span class="string">b"\0"</span>))</span><br></pre></td></tr></table></figure></div>
+<div class="code-container" data-rel="Plaintext"><figure class="iseeu highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">SYC{lwe_And_rsa_secret_safe}</span><br></pre></td></tr></table></figure></div>
+<h2 id="Sparse-Whisper"><a href="#Sparse-Whisper" class="headerlink" title="Sparse Whisper"></a>Sparse Whisper</h2><p>附件只有一份生成器源码，参数和实例数据全摆在明面上，<code>derive_key</code> 里留了个 <code>NotImplementedError</code>，意思很直白：KDF你自己补<br>先把参数拎出来</p>
+<div class="code-container" data-rel="Plaintext"><figure class="iseeu highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">q = 2053, n = 5, m = 9</span><br><span class="line">s : 5 个 Z_q 上的随机数</span><br><span class="line">e : k ∈ {1,2,3} 个非零位，取值 1~39</span><br><span class="line">b = A·s + e   (mod q)</span><br></pre></td></tr></table></figure></div>
+<p>标准LWE，无非误差<strong>极稀疏</strong>——题面那句「只有很少几行带额外偏移」说的就是它<br>q 才 2053，n 才 5，这规模连 LLL 都不用请<del class="mask">上一题被 Kannan 嵌入支配的阴影可以搁下了</del><br>突破口在 m=9 &gt; n=5：误差行最多 3 个，那至少有 6 行是干净的。任取 5 行解一个 5×5 的模 q 线性系统就能得出一组 s，真解和假解的区别只在于真解能让<strong>全部 9 行</strong>的残差都落在「0 或 1~39」里<br>所以判据直接照抄生成器：<br><mjx-container class="MathJax" jax="SVG" overflow="overflow" display="true"><svg style="vertical-align: -0.566ex;" xmlns="http://www.w3.org/2000/svg" width="58.044ex" height="2.262ex" role="img" focusable="false" viewBox="0 -750 25655.3 1000"><g stroke="currentColor" fill="currentColor" stroke-width="0" transform="scale(1,-1)"><g data-mml-node="math" data-latex="r_i=(b_i-A_i\cdot s)\bmod q\ \Rightarrow\ \#\{i:r_i\neq 0\}\le 3,\quad r_i\in[1,39]"><g data-mml-node="msub" data-latex="r_i"><g data-mml-node="mi" data-latex="r"><path data-c="1D45F" d="M436 374C436 416 395 442 351 442C302 442 261 419 227 372C217 411 183 442 136 442C95 442 65 410 44 345C34 312 29 293 29 287C29 278 34 273 45 273C50 273 53 274 56 276C61 285 64 292 65 299C83 375 106 413 133 413C150 413 159 399 159 371C159 358 154 331 144 290L87 63C84 50 78 24 78 19C78-1 89-11 110-11C130-11 143-1 150 19L169 91C180 134 187 162 190 175L221 303C223 311 231 324 244 343C271 381 302 413 351 413C363 413 373 411 382 406C352 397 337 378 337 351C337 325 351 312 378 312C411 312 436 341 436 374Z"></path></g><g data-mml-node="mi" transform="translate(484,-150) scale(0.707)" data-latex="i"><path data-c="1D456" d="M284 621C284 648 271 661 244 661C216 661 188 633 188 605C188 578 202 565 229 565C257 565 284 593 284 621M259 138C237 59 205 19 164 19C151 19 144 28 144 47C144 64 173 150 232 306C240 329 244 347 244 360C244 409 210 445 161 445C118 445 84 420 59 369C39 328 29 301 29 288C29 279 34 275 45 275C58 275 60 281 64 295C87 375 118 415 158 415C171 415 178 406 178 387C178 373 175 357 168 338C145 275 121 208 101 155C86 115 78 88 78 74C78 25 114-11 162-11C205-11 239 14 264 64C283 103 293 130 293 145C293 154 288 159 277 159C274 159 259 150 259 138Z"></path></g></g><g data-mml-node="mo" data-latex="=" transform="translate(1055.7,0)"><path data-c="3D" d="M698 367L80 367C64 367 56 359 56 344C56 329 64 321 80 321L698 321C714 321 722 329 722 344C722 356 711 367 698 367M698 179L80 179C64 179 56 171 56 156C56 141 64 133 80 133L698 133C714 133 722 141 722 156C722 169 711 179 698 179Z"></path></g><g data-mml-node="mo" data-latex="(" transform="translate(2111.5,0)"><path data-c="28" d="M318-248C327-248 332-243 332-234C332-231 330-227 327-223C275-183 233-117 202-26C175 53 161 131 161 208L161 292C161 369 175 447 202 526C233 617 275 683 327 723C330 726 332 730 332 734C332 743 327 748 318 748C317 748 314 747 311 745C251 699 201 631 160 540C121 453 101 371 101 292L101 208C101 129 121 47 160-40C201-131 251-199 311-245C314-247 317-248 318-248Z"></path></g><g data-mml-node="msub" data-latex="b_i" transform="translate(2500.5,0)"><g data-mml-node="mi" data-latex="b"><path data-c="1D44F" d="M281 445C245 445 209 428 174 394L243 679C241 688 238 694 226 694C193 694 120 685 107 684C92 682 84 675 84 660C84 650 93 645 112 645C131 645 157 646 157 632C157 628 152 608 143 571L63 249C52 207 47 173 47 148C47 62 93-11 175-11C240-11 297 22 347 89C392 151 415 216 415 283C415 370 364 445 281 445M279 415C318 415 337 385 337 326C337 299 331 263 319 218C297 133 268 75 233 44C213 27 194 19 175 19C134 19 114 51 114 115C114 137 119 170 129 214L151 304C154 319 159 330 165 338C204 389 242 415 279 415Z"></path></g><g data-mml-node="mi" transform="translate(462,-150) scale(0.707)" data-latex="i"><path data-c="1D456" d="M284 621C284 648 271 661 244 661C216 661 188 633 188 605C188 578 202 565 229 565C257 565 284 593 284 621M259 138C237 59 205 19 164 19C151 19 144 28 144 47C144 64 173 150 232 306C240 329 244 347 244 360C244 409 210 445 161 445C118 445 84 420 59 369C39 328 29 301 29 288C29 279 34 275 45 275C58 275 60 281 64 295C87 375 118 415 158 415C171 415 178 406 178 387C178 373 175 357 168 338C145 275 121 208 101 155C86 115 78 88 78 74C78 25 114-11 162-11C205-11 239 14 264 64C283 103 293 130 293 145C293 154 288 159 277 159C274 159 259 150 259 138Z"></path></g></g><g data-mml-node="mo" data-latex="-" transform="translate(3478.7,0)"><path data-c="2212" d="M698 270L80 270C64 270 56 263 56 250C56 237 64 230 80 230L698 230C714 230 722 237 722 250C722 262 710 270 698 270Z"></path></g><g data-mml-node="msub" data-latex="A_i" transform="translate(4478.9,0)"><g data-mml-node="mi" data-latex="A"><path data-c="1D434" d="M137 3C155 3 217 0 236 0C251 0 258 8 258 23C258 32 252 38 239 39C210 40 196 50 196 69C196 78 205 98 224 128C251 173 270 206 283 228L526 228C526 221 527 207 530 185C537 112 541 72 541 67C541 48 519 39 474 39C455 39 446 31 446 15C446 5 452 0 464 0C488 0 564 3 588 3C608 3 679 0 699 0C714 0 721 8 721 24C721 34 712 39 694 39C666 39 649 41 644 44C639 47 635 56 634 71L574 689C571 708 572 716 551 716C539 716 529 710 522 697L178 120C148 70 108 43 59 39C43 38 35 30 35 15C35 5 41 0 52 0C68 0 121 3 137 3M492 577L522 267L307 267Z"></path></g><g data-mml-node="mi" transform="translate(783,-150) scale(0.707)" data-latex="i"><path data-c="1D456" d="M284 621C284 648 271 661 244 661C216 661 188 633 188 605C188 578 202 565 229 565C257 565 284 593 284 621M259 138C237 59 205 19 164 19C151 19 144 28 144 47C144 64 173 150 232 306C240 329 244 347 244 360C244 409 210 445 161 445C118 445 84 420 59 369C39 328 29 301 29 288C29 279 34 275 45 275C58 275 60 281 64 295C87 375 118 415 158 415C171 415 178 406 178 387C178 373 175 357 168 338C145 275 121 208 101 155C86 115 78 88 78 74C78 25 114-11 162-11C205-11 239 14 264 64C283 103 293 130 293 145C293 154 288 159 277 159C274 159 259 150 259 138Z"></path></g></g><g data-mml-node="mo" data-latex="\cdot" transform="translate(5778.1,0)"><path data-c="22C5" d="M192 250C192 279 168 303 139 303C110 303 86 279 86 250C86 221 110 197 139 197C168 197 192 221 192 250Z"></path></g><g data-mml-node="mi" data-latex="s" transform="translate(6278.3,0)"><path data-c="1D460" d="M420 354C420 411 362 442 300 442C237 442 192 423 165 385C142 352 130 322 130 295C130 242 165 208 234 193C263 188 285 181 302 173C323 164 333 147 333 123C333 105 325 85 308 62C287 33 250 18 197 18C143 18 108 33 92 62C124 61 151 87 151 119C151 144 138 157 111 157C75 157 52 124 52 88C52 22 124-11 196-11C271-11 325 11 357 56C384 93 397 126 397 156C397 199 376 231 335 252C304 263 280 270 265 273C230 282 194 285 194 328C194 381 244 413 300 413C342 413 369 400 382 375C360 371 337 352 337 327C337 306 348 295 371 295C402 295 420 323 420 354Z"></path></g><g data-mml-node="mo" data-latex=")" transform="translate(6747.3,0)"><path data-c="29" d="M78-245C138-199 188-131 229-40C268 47 288 129 288 208L288 292C288 371 268 453 229 540C188 631 138 699 78 745C75 747 72 748 71 748C62 748 57 743 57 734C57 730 59 726 62 723C114 683 156 617 187 526C214 447 228 369 228 292L228 208C228 131 214 53 187-26C156-117 114-183 62-223C59-227 57-231 57-234C57-243 62-248 71-248C72-248 75-247 78-245Z"></path></g><g data-mml-node="mo" data-latex="\mmlToken{mo}[lspace=&quot;0.278em&quot; rspace=&quot;0.278em&quot;]{mod}" transform="translate(7414.3,0)"><path data-c="6D" d="M315 413C361 413 384 378 384 307L384 79C384 60 381 48 374 44C367 40 344 38 307 38L307 0L423 3L538 0L538 38C501 38 479 40 472 44C465 48 461 60 461 79L461 259C461 339 513 413 590 413C637 413 660 378 660 307L660 79C660 60 656 48 649 44C642 40 619 38 582 38L582 0L698 3L813 0L813 38C781 38 760 39 750 42C740 45 736 52 736 64L736 251C736 298 734 331 731 350C721 411 676 442 597 442C534 442 487 413 455 354C441 413 397 442 322 442C259 442 211 412 179 352L179 442L32 431L32 393C68 393 90 390 98 384C106 378 109 365 109 342L109 79C109 60 105 48 98 44C91 40 69 38 32 38L32 0L148 3L263 0L263 38C226 38 203 40 196 44C189 48 185 60 185 79L185 259C185 340 238 413 315 413Z"></path><path data-c="6F" d="M249-11C311-11 363 11 406 55C449 99 471 152 471 214C471 277 450 332 408 378C366 424 313 448 250 448C187 448 135 424 92 378C49 332 28 277 28 214C28 152 49 99 92 55C135 11 188-11 249-11M250 21C202 21 166 42 141 85C125 113 117 159 117 222C117 283 125 327 140 355C164 398 200 419 249 419C296 419 332 398 357 357C374 329 382 284 382 222C382 106 348 21 250 21Z" transform="translate(833,0)"></path><path data-c="64" d="M374-11L527 0L527 38C491 38 470 40 462 46C454 52 450 67 450 90L450 694L301 683L301 645C336 645 358 642 366 636C374 630 377 616 377 593L377 390C345 427 305 445 257 445C195 445 142 423 99 378C56 333 34 279 34 216C34 155 54 102 95 57C136 12 186-11 247-11C298-11 341 8 374 47M261 415C304 415 339 396 364 358C371 347 374 336 374 323L374 121C374 108 371 97 364 86C336 41 298 19 251 19C210 19 177 39 151 80C133 110 124 155 124 215C124 324 161 415 261 415Z" transform="translate(1333,0)"></path></g><g data-mml-node="mi" data-latex="q" transform="translate(9581.3,0)"><path data-c="1D45E" d="M372 377C352 420 321 442 280 442C215 442 158 409 109 342C63 280 40 216 40 149C40 62 90-13 173-13C209-13 245 4 282 38L241-126C238-141 229-150 215-153C210-154 197-155 174-155C168-156 164-156 162-156C153-157 148-165 148-179L148-183C151-190 157-194 165-194C184-194 244-191 263-191C282-191 345-194 364-194C378-194 385-186 385-170C385-160 375-155 356-155C338-155 313-156 313-144C313-140 314-133 317-123L452 427C452 436 447 441 438 441C420 441 382 391 372 377M340 373C349 352 354 338 354 329C354 328 353 322 351 313L327 216C308 144 299 107 298 105C279 70 224 16 176 16C137 16 117 46 117 105C117 151 148 263 162 300C181 347 225 412 280 412C307 412 327 399 340 373Z"></path></g><g data-mml-node="mtext" data-latex="\ " transform="translate(10033.3,0)"><path data-c="A0" d=""></path></g><g data-mml-node="mo" data-latex="\Rightarrow" transform="translate(10643.1,0)"><path data-c="21D2" d="M927 233C935 237 939 243 939 250C939 257 935 263 927 267C866 283 804 318 742 371C697 410 662 455 636 507C632 516 625 520 615 520C599 520 591 512 591 496C591 494 592 491 593 486C616 442 644 403 676 369L84 369C68 369 60 361 60 346C60 330 68 322 84 322L728 322C765 292 806 268 849 250C806 232 765 208 728 178L84 178C68 178 60 170 60 154C60 139 68 131 84 131L676 131C644 97 616 58 593 14C592 9 591 6 591 4C591-12 599-20 615-20C625-20 632-16 636-7C662 45 697 90 742 129C804 182 866 217 927 233Z"></path></g><g data-mml-node="mtext" data-latex="\ " transform="translate(11920.9,0)"><path data-c="A0" d=""></path></g><g data-mml-node="mi" data-latex="\#" transform="translate(12252.9,0)"><path data-c="23" d="M739 130C764 130 776 138 776 154C776 170 763 178 738 178L535 178L572 322L738 322C763 322 776 330 776 346C776 362 764 370 739 370L586 370L662 651C665 657 666 663 666 670C666 686 658 694 642 694C637 694 632 692 628 689C622 679 618 672 617 667L538 370L360 370L436 651C439 657 440 663 440 670C440 686 432 694 416 694C411 694 406 692 401 689C395 679 391 672 390 667L311 370L93 370C68 370 56 362 56 346C56 330 69 322 94 322L297 322L260 178L94 178C69 178 56 170 56 154C56 138 68 130 93 130L246 130L170-151C167-157 166-163 166-170C166-186 174-194 190-194C195-194 200-192 204-189C210-179 214-172 215-167L294 130L472 130L396-151C393-157 392-163 392-170C392-186 400-194 416-194C421-194 426-192 431-189C437-179 441-172 442-167L521 130M346 322L524 322L486 178L308 178Z"></path></g><g data-mml-node="mo" data-latex="\{" transform="translate(13085.9,0)"><path data-c="7B" d="M286-122L286 126C286 183 251 225 182 250C251 275 286 317 286 374L286 622C286 680 348 718 409 718C420 718 425 723 425 734C425 745 420 750 409 750C363 750 321 740 284 721C237 697 214 664 214 622L214 374C214 311 154 266 91 266C80 266 75 261 75 250C75 239 80 234 91 234C155 234 214 188 214 126L214-122C214-164 237-197 284-221C321-240 363-250 409-250C420-250 425-245 425-234C425-223 420-218 409-218C348-218 286-180 286-122Z"></path></g><g data-mml-node="mi" data-latex="i" transform="translate(13585.9,0)"><path data-c="1D456" d="M284 621C284 648 271 661 244 661C216 661 188 633 188 605C188 578 202 565 229 565C257 565 284 593 284 621M259 138C237 59 205 19 164 19C151 19 144 28 144 47C144 64 173 150 232 306C240 329 244 347 244 360C244 409 210 445 161 445C118 445 84 420 59 369C39 328 29 301 29 288C29 279 34 275 45 275C58 275 60 281 64 295C87 375 118 415 158 415C171 415 178 406 178 387C178 373 175 357 168 338C145 275 121 208 101 155C86 115 78 88 78 74C78 25 114-11 162-11C205-11 239 14 264 64C283 103 293 130 293 145C293 154 288 159 277 159C274 159 259 150 259 138Z"></path></g><g data-mml-node="mo" data-latex=":" transform="translate(14208.6,0)"><path data-c="3A" d="M192 375C192 405 169 431 139 431C109 431 86 405 86 375C86 345 109 319 139 319C169 319 192 345 192 375M192 56C192 86 169 112 139 112C109 112 86 86 86 56C86 26 109 0 139 0C169 0 192 26 192 56Z"></path></g><g data-mml-node="msub" data-latex="r_i" transform="translate(14764.4,0)"><g data-mml-node="mi" data-latex="r"><path data-c="1D45F" d="M436 374C436 416 395 442 351 442C302 442 261 419 227 372C217 411 183 442 136 442C95 442 65 410 44 345C34 312 29 293 29 287C29 278 34 273 45 273C50 273 53 274 56 276C61 285 64 292 65 299C83 375 106 413 133 413C150 413 159 399 159 371C159 358 154 331 144 290L87 63C84 50 78 24 78 19C78-1 89-11 110-11C130-11 143-1 150 19L169 91C180 134 187 162 190 175L221 303C223 311 231 324 244 343C271 381 302 413 351 413C363 413 373 411 382 406C352 397 337 378 337 351C337 325 351 312 378 312C411 312 436 341 436 374Z"></path></g><g data-mml-node="mi" transform="translate(484,-150) scale(0.707)" data-latex="i"><path data-c="1D456" d="M284 621C284 648 271 661 244 661C216 661 188 633 188 605C188 578 202 565 229 565C257 565 284 593 284 621M259 138C237 59 205 19 164 19C151 19 144 28 144 47C144 64 173 150 232 306C240 329 244 347 244 360C244 409 210 445 161 445C118 445 84 420 59 369C39 328 29 301 29 288C29 279 34 275 45 275C58 275 60 281 64 295C87 375 118 415 158 415C171 415 178 406 178 387C178 373 175 357 168 338C145 275 121 208 101 155C86 115 78 88 78 74C78 25 114-11 162-11C205-11 239 14 264 64C283 103 293 130 293 145C293 154 288 159 277 159C274 159 259 150 259 138Z"></path></g></g><g data-mml-node="mo" data-latex="\neq" transform="translate(15820.1,0)"><path data-c="2260" d="M698 178L388 178L440 322L698 322C714 322 722 330 722 346C722 362 714 370 698 370L458 370L576 698C578 701 579 703 579 706C579 722 571 730 555 730C542 730 535 725 532 714L407 370L80 370C64 370 56 362 56 346C56 330 64 322 80 322L390 322L338 178L80 178C64 178 56 170 56 154C56 138 64 130 80 130L320 130L201-198C200-200 200-203 200-206C200-222 208-230 224-230C236-230 243-225 246-214L371 130L698 130C714 130 722 138 722 154C722 166 711 178 698 178Z"></path></g><g data-mml-node="mn" data-latex="0" transform="translate(16875.9,0)"><path data-c="30" d="M249-22C390-22 460 92 460 320C460 473 428 575 365 625C330 652 291 666 250 666C109 666 39 551 39 320C39 136 88-22 249-22M361 524C368 489 371 425 371 332C371 240 367 172 360 128C347 48 310 8 249 8C226 8 203 17 182 34C155 57 139 104 132 176C129 201 128 253 128 332C128 419 131 480 136 513C145 568 163 603 191 618C213 630 232 636 249 636C314 636 350 583 361 524Z"></path></g><g data-mml-node="mo" data-latex="\}" transform="translate(17375.9,0)"><path data-c="7D" d="M286 374L286 622C286 664 263 697 216 721C179 740 137 750 91 750C80 750 75 745 75 734C75 723 80 718 91 718C152 718 214 680 214 622L214 374C214 317 249 275 318 250C249 225 214 183 214 126L214-122C214-180 152-218 91-218C80-218 75-223 75-234C75-245 80-250 91-250C137-250 179-240 216-221C263-197 286-164 286-122L286 126C286 188 345 234 409 234C420 234 425 239 425 250C425 261 420 266 409 266C345 266 286 312 286 374Z"></path></g><g data-mml-node="mo" data-latex="\le" transform="translate(18153.7,0)"><path data-c="2264" d="M668 38C686 29 703 44 703 60C703 69 698 76 689 80L155 333L689 586C698 590 703 597 703 606C703 623 695 631 679 631C675 631 671 630 668 629L94 357C84 352 79 344 79 333C79 322 84 315 94 310M678-72L100-72C84-72 76-80 76-95C76-111 84-119 100-119L678-119C694-119 702-111 702-95C702-83 691-72 678-72Z"></path></g><g data-mml-node="mn" data-latex="3" transform="translate(19209.5,0)"><path data-c="33" d="M303 353C369 378 431 441 431 526C431 569 410 604 369 631C333 654 292 666 246 666C201 666 162 654 127 631C88 605 68 571 68 528C68 495 90 472 122 472C154 472 176 495 176 527C176 560 157 578 119 580C145 615 186 633 242 633C302 633 332 598 332 527C332 485 324 450 309 421C282 373 245 364 183 364C171 362 165 357 165 348C165 333 172 333 192 333L235 333C310 333 348 280 348 173C348 88 317 14 241 14C176 14 128 36 99 80C134 79 160 105 160 139C160 173 135 198 101 198C62 198 42 178 42 137C42 88 64 49 108 18C147-9 193-22 244-22C301-22 350-3 393 34C436 71 457 117 457 173C457 267 383 332 303 353Z"></path></g><g data-mml-node="mo" data-latex="," transform="translate(19709.5,0)"><path data-c="2C" d="M139 106C107 106 86 82 86 50C86 20 109-5 139-5C153-5 165-1 174 8L175 0C175-63 154-117 112-160C105-168 101-174 101-178C101-188 105-193 114-193C123-193 135-181 152-158C186-110 203-57 203 0C203 53 185 106 139 106Z"></path></g><g data-mml-node="mspace" data-latex="\quad" transform="translate(19987.5,0)"></g><g data-mml-node="msub" data-latex="r_i" transform="translate(21154.1,0)"><g data-mml-node="mi" data-latex="r"><path data-c="1D45F" d="M436 374C436 416 395 442 351 442C302 442 261 419 227 372C217 411 183 442 136 442C95 442 65 410 44 345C34 312 29 293 29 287C29 278 34 273 45 273C50 273 53 274 56 276C61 285 64 292 65 299C83 375 106 413 133 413C150 413 159 399 159 371C159 358 154 331 144 290L87 63C84 50 78 24 78 19C78-1 89-11 110-11C130-11 143-1 150 19L169 91C180 134 187 162 190 175L221 303C223 311 231 324 244 343C271 381 302 413 351 413C363 413 373 411 382 406C352 397 337 378 337 351C337 325 351 312 378 312C411 312 436 341 436 374Z"></path></g><g data-mml-node="mi" transform="translate(484,-150) scale(0.707)" data-latex="i"><path data-c="1D456" d="M284 621C284 648 271 661 244 661C216 661 188 633 188 605C188 578 202 565 229 565C257 565 284 593 284 621M259 138C237 59 205 19 164 19C151 19 144 28 144 47C144 64 173 150 232 306C240 329 244 347 244 360C244 409 210 445 161 445C118 445 84 420 59 369C39 328 29 301 29 288C29 279 34 275 45 275C58 275 60 281 64 295C87 375 118 415 158 415C171 415 178 406 178 387C178 373 175 357 168 338C145 275 121 208 101 155C86 115 78 88 78 74C78 25 114-11 162-11C205-11 239 14 264 64C283 103 293 130 293 145C293 154 288 159 277 159C274 159 259 150 259 138Z"></path></g></g><g data-mml-node="mo" data-latex="\in" transform="translate(22209.9,0)"><path data-c="2208" d="M563 4L373 4C310 4 254 25 208 68C162 111 136 163 130 226L563 226C579 226 587 234 587 250C587 266 579 274 563 274L130 274C136 337 162 389 208 432C254 475 310 496 373 496L563 496C579 496 587 504 587 519C587 535 579 543 563 543L373 543C292 543 223 515 166 458C109 401 81 332 81 250C81 168 109 99 166 42C223-15 292-43 373-43L563-43C579-43 587-35 587-19C587-7 576 4 563 4Z"></path></g><g data-mml-node="mo" data-latex="[" transform="translate(23154.6,0)"><path data-c="5B" d="M233-202L159-202L159 702L233 702C248 702 256 710 256 726C256 742 248 750 233 750L114 750L114-250L233-250C248-250 256-242 256-226C256-214 245-202 233-202Z"></path></g><g data-mml-node="mn" data-latex="1" transform="translate(23432.6,0)"><path data-c="31" d="M269 666C228 624 168 603 89 603L89 564C141 564 184 572 217 588L217 82C217 64 213 52 204 47C195 42 170 39 130 39L95 39L95 0C120 2 174 3 257 3C340 3 394 2 419 0L419 39L384 39C343 39 318 42 310 47C302 52 297 64 297 82L297 636C297 660 295 666 269 666Z"></path></g><g data-mml-node="mo" data-latex="," transform="translate(23932.6,0)"><path data-c="2C" d="M139 106C107 106 86 82 86 50C86 20 109-5 139-5C153-5 165-1 174 8L175 0C175-63 154-117 112-160C105-168 101-174 101-178C101-188 105-193 114-193C123-193 135-181 152-158C186-110 203-57 203 0C203 53 185 106 139 106Z"></path></g><g data-mml-node="mn" data-latex="39" transform="translate(24377.3,0)"><path data-c="33" d="M303 353C369 378 431 441 431 526C431 569 410 604 369 631C333 654 292 666 246 666C201 666 162 654 127 631C88 605 68 571 68 528C68 495 90 472 122 472C154 472 176 495 176 527C176 560 157 578 119 580C145 615 186 633 242 633C302 633 332 598 332 527C332 485 324 450 309 421C282 373 245 364 183 364C171 362 165 357 165 348C165 333 172 333 192 333L235 333C310 333 348 280 348 173C348 88 317 14 241 14C176 14 128 36 99 80C134 79 160 105 160 139C160 173 135 198 101 198C62 198 42 178 42 137C42 88 64 49 108 18C147-9 193-22 244-22C301-22 350-3 393 34C436 71 457 117 457 173C457 267 383 332 303 353Z"></path><path data-c="39" d="M116 140C83 140 67 123 67 89C67 14 128-22 207-22C287-22 351 18 398 99C437 166 457 243 457 329C457 456 434 546 388 599C349 644 304 666 253 666C194 666 145 645 106 602C63 557 42 503 42 440C42 379 60 327 96 284C134 238 183 215 242 215C294 215 334 243 361 299L361 286C361 177 342 103 303 63C272 30 239 14 206 14C166 14 137 23 118 42C149 42 165 60 165 91C165 119 144 140 116 140M243 246C204 246 175 266 155 306C144 329 138 374 138 439C138 504 145 548 158 573C180 613 212 633 253 633C294 633 324 608 343 558C354 531 361 485 361 420C361 333 322 246 243 246Z" transform="translate(500,0)"></path></g><g data-mml-node="mo" data-latex="]" transform="translate(25377.3,0)"><path data-c="5D" d="M45-250L164-250L164 750L45 750C30 750 22 742 22 726C22 710 30 702 45 702L119 702L119-202L45-202C30-202 22-210 22-226C22-242 30-250 45-250Z"></path></g></g></g></svg></mjx-container><br>这约束强到基本只有唯一解能过，而枚举量只有 C(9,5)=126 次小高斯消元，风扇都不带转的</p>
+<div class="code-container" data-rel="Python"><figure class="iseeu highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">from</span> itertools <span class="keyword">import</span> combinations</span><br><span class="line">Q = <span class="number">2053</span></span><br><span class="line"><span class="keyword">def</span> <span class="title function_">gauss</span>(<span class="params">rows</span>):</span><br><span class="line">    T = [[A[r][c] <span class="keyword">for</span> c <span class="keyword">in</span> <span class="built_in">range</span>(<span class="number">5</span>)] + [b[r]] <span class="keyword">for</span> r <span class="keyword">in</span> rows]</span><br><span class="line">    <span class="keyword">for</span> c <span class="keyword">in</span> <span class="built_in">range</span>(<span class="number">5</span>):</span><br><span class="line">        p = <span class="built_in">next</span>(r <span class="keyword">for</span> r <span class="keyword">in</span> <span class="built_in">range</span>(c, <span class="number">5</span>) <span class="keyword">if</span> T[r][c] % Q)</span><br><span class="line">        T[c], T[p] = T[p], T[c]</span><br><span class="line">        T[c] = [x * <span class="built_in">pow</span>(T[c][c], -<span class="number">1</span>, Q) % Q <span class="keyword">for</span> x <span class="keyword">in</span> T[c]]</span><br><span class="line">        <span class="keyword">for</span> r <span class="keyword">in</span> <span class="built_in">range</span>(<span class="number">5</span>):</span><br><span class="line">            <span class="keyword">if</span> r != c:</span><br><span class="line">                T[r] = [(T[r][k] - T[r][c] * T[c][k]) % Q <span class="keyword">for</span> k <span class="keyword">in</span> <span class="built_in">range</span>(<span class="number">6</span>)]</span><br><span class="line">    <span class="keyword">return</span> [T[i][<span class="number">5</span>] <span class="keyword">for</span> i <span class="keyword">in</span> <span class="built_in">range</span>(<span class="number">5</span>)]</span><br><span class="line"><span class="keyword">for</span> rows <span class="keyword">in</span> combinations(<span class="built_in">range</span>(<span class="number">9</span>), <span class="number">5</span>):</span><br><span class="line">    s = gauss(rows)</span><br><span class="line">    e = [(b[i] - <span class="built_in">sum</span>(A[i][j] * s[j] <span class="keyword">for</span> j <span class="keyword">in</span> <span class="built_in">range</span>(<span class="number">5</span>))) % Q <span class="keyword">for</span> i <span class="keyword">in</span> <span class="built_in">range</span>(<span class="number">9</span>)]</span><br><span class="line">    <span class="keyword">if</span> <span class="built_in">sum</span>(<span class="number">1</span> <span class="keyword">for</span> x <span class="keyword">in</span> e <span class="keyword">if</span> x) &lt;= <span class="number">3</span> <span class="keyword">and</span> <span class="built_in">max</span>(e) &lt; <span class="number">40</span>:</span><br><span class="line">        <span class="keyword">break</span></span><br></pre></td></tr></table></figure></div>
+<p>跑下来只有一组能活：</p>
+<div class="code-container" data-rel="Plaintext"><figure class="iseeu highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">s    = [919, 697, 2048, 1674, 1237]</span><br><span class="line">残差 = [0, 0, 0, 0, 8, 39, 0, 0, 0]</span><br></pre></td></tr></table></figure></div>
+<p>只有下标 4、5 两行带偏移，值分别是 8 和 39，都落在 <code>randrange(1,40)</code> 的范围内，跟源码严丝合缝，说明 s 没解歪<br>KDF 规则源码写得很清楚，不用猜：</p>
+<div class="code-container" data-rel="Plaintext"><figure class="iseeu highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">key = sha256( bytes(s_i % 256) + b"::lwe-aes-week3::" )[:16]</span><br></pre></td></tr></table></figure></div>
+<div class="code-container" data-rel="Plaintext"><figure class="iseeu highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">s % 256 = 97 b9 00 8a d5</span><br><span class="line">=&gt; key  = 36e8509bf0755a180ab69d9d0d01ea92</span><br></pre></td></tr></table></figure></div>
+<p>剩下就是 AES-128-CBC 一把梭，<del class="mask">机器上没装 pycryptodome 也无所谓，openssl 一样干活</del></p>
+<div class="code-container" data-rel="Python"><figure class="iseeu highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> hashlib, subprocess</span><br><span class="line">key = hashlib.sha256(<span class="built_in">bytes</span>(x % <span class="number">256</span> <span class="keyword">for</span> x <span class="keyword">in</span> s) + <span class="string">b'::lwe-aes-week3::'</span>).digest()[:<span class="number">16</span>]</span><br><span class="line">pt = subprocess.run([<span class="string">'openssl'</span>, <span class="string">'enc'</span>, <span class="string">'-aes-128-cbc'</span>, <span class="string">'-d'</span>, <span class="string">'-K'</span>, key.<span class="built_in">hex</span>(), <span class="string">'-iv'</span>, iv],</span><br><span class="line">                    <span class="built_in">input</span>=<span class="built_in">bytes</span>.fromhex(ct), capture_output=<span class="literal">True</span>).stdout</span><br><span class="line"><span class="built_in">print</span>(pt.decode())</span><br></pre></td></tr></table></figure></div>
+<p><code>iv</code> 和 <code>ct</code> 直接取数据块里那两行十六进制。要注意 openssl <strong>自己会去 PKCS#7 填充</strong>，你要是习惯性再补一句 <code>pt[:-pt[-1]]</code>，就会因为末位是 <code>}</code>(0x7d) 把整段明文切空<del class="mask">（别问我怎么知道的）</del></p>
+<div class="code-container" data-rel="Plaintext"><figure class="iseeu highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">SYC{sparse_lwe_aes_chain_v1_g0_t0_study_by_y0urself}</span><br></pre></td></tr></table></figure></div>
+		</div>
+
+		
+		<div class="post-copyright-info w-full my-8 px-2 sm:px-6 md:px-8">
+			<div class="article-copyright-info-container">
+    <ul>
+        <li><strong>标题:</strong> 2026 极客大挑战 WP WEEK3</li>
+        <li><strong>作者:</strong> Kur0Ai1uro</li>
+        <li><strong>创建于
+                :</strong> 2026-11-07 12:00:00</li>
+        
+            <li>
+                <strong>更新于
+                    :</strong> 2026-11-23 20:59:59
+            </li>
+        
+        <li>
+            <strong>链接:</strong> https://kur0ai1uro.github.io/2026/11/07/CTF/2026 极客大挑战 WP WEEK3/
+        </li>
+        <li>
+            <strong>
+                版权声明:
+            </strong>
+            
+
+            
+                本文章采用 <a class="license" target="_blank" rel="noopener" href="https://creativecommons.org/licenses/by-nc-sa/4.0">CC BY-NC-SA 4.0</a> 进行许可。
+            
+        </li>
+    </ul>
+</div>
+
+		</div>
+		
+
+		
+		<ul class="post-tags-box text-lg mt-1.5 flex-wrap justify-center flex md:hidden">
+			
+			<li class="tag-item mx-0.5">
+				<a href="/tags/CTF/">#CTF</a>&nbsp;
+			</li>
+			
+			<li class="tag-item mx-0.5">
+				<a href="/tags/Writeup/">#Writeup</a>&nbsp;
+			</li>
+			
+		</ul>
+		
+
+		
+
+		
+		<div class="article-nav my-8 flex justify-between items-center px-2 sm:px-6 md:px-8">
+			
+			<div class="article-prev border-border-color shadow-redefine-flat shadow-shadow-color-2 rounded-medium px-4 py-2 hover:shadow-redefine-flat-hover hover:shadow-shadow-color-2">
+				<a class="prev" rel="prev" href="/2026/11/08/CTF/2026%20%E6%9E%81%E5%AE%A2%E5%A4%A7%E6%8C%91%E6%88%98%20WP%20WEEK4/">
+					<span class="left arrow-icon flex justify-center items-center">
+						<i class="fa-solid fa-chevron-left"></i>
+					</span>
+					<span class="title flex justify-center items-center">
+						<span class="post-nav-title-item truncate max-w-48">2026 极客大挑战 WP WEEK4</span>
+						<span class="post-nav-item">上一篇</span>
+					</span>
+				</a>
+			</div>
+			
+			
+			<div class="article-next border-border-color shadow-redefine-flat shadow-shadow-color-2 rounded-medium px-4 py-2 hover:shadow-redefine-flat-hover hover:shadow-shadow-color-2">
+				<a class="next" rel="next" href="/2026/11/06/%E4%B9%B1%E4%B8%83%E5%85%AB%E7%B3%9F%E7%9A%84%E7%9F%A5%E8%AF%86%E5%BA%93/%E6%9D%82%E9%A3%9F%E7%9F%A5%E8%AF%86%E5%BA%931%20-%20%E8%A1%8C%E5%88%97%E5%BC%8F/">
+					<span class="title flex justify-center items-center">
+						<span class="post-nav-title-item truncate max-w-48">杂食性知识库#1：线性代数-行列式</span>
+						<span class="post-nav-item">下一篇</span>
+					</span>
+					<span class="right arrow-icon flex justify-center items-center">
+						<i class="fa-solid fa-chevron-right"></i>
+					</span>
+				</a>
+			</div>
+			
+		</div>
+		
+
+
+		
+	</div>
+
+	
+	<div class="toc-content-container">
+		<div class="post-toc-wrap">
+	<div class="post-toc">
+		<div class="toc-title">目录</div>
+		<div class="page-title">2026 极客大挑战 WP WEEK3</div>
+		<ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#Misc"><span class="nav-number">1.</span> <span class="nav-text">Misc</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#Silent-Heads"><span class="nav-number">1.1.</span> <span class="nav-text">Silent Heads</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%BC%A6%E5%A4%96%E4%B9%8B%E9%9F%B3"><span class="nav-number">1.2.</span> <span class="nav-text">弦外之音</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#Crypto"><span class="nav-number">2.</span> <span class="nav-text">Crypto</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#learning-with-big-erro%E2%80%A6"><span class="nav-number">2.1.</span> <span class="nav-text">learning with big erro…</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Prime-in-the-Noise"><span class="nav-number">2.2.</span> <span class="nav-text">Prime in the Noise</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Sparse-Whisper"><span class="nav-number">2.3.</span> <span class="nav-text">Sparse Whisper</span></a></li></ol></li></ol>
+
+	</div>
+</div>
+	</div>
+	
+</div>
+
+			</div>
+
+			
+		</div>
+
+		<div class="main-content-footer">
+			<footer class="footer mt-5 py-5 h-auto text-base text-third-text-color relative border-t-2 border-t-border-color">
+    <div class="info-container py-3 text-center">
+        
+        <div class="text-center">
+            &copy;
+            
+              <span>2022</span>
+              -
+            
+            2026&nbsp;&nbsp;<i class="fa-solid fa-heart fa-beat" style="--fa-animation-duration: 0.5s; color: #f54545"></i>&nbsp;&nbsp;<a href="/">Kur0Ai1uro</a>
+            
+                
+                <p class="post-count space-x-0.5">
+                    <span>
+                        共撰写了 12 篇文章
+                    </span>
+                    
+                        <span>
+                            共 36k 字
+                        </span>
+                    
+                </p>
+            
+        </div>
+        
+            <script data-swup-reload-script src="https://cn.vercount.one/js"></script>
+            <div class="relative text-center lg:absolute lg:right-[20px] lg:top-1/2 lg:-translate-y-1/2 lg:text-right">
+                
+                    <span id="busuanzi_container_site_uv" class="lg:!block">
+                        <span class="text-sm">访问人数</span>
+                        <span id="busuanzi_value_site_uv"></span>
+                    </span>
+                
+                
+                    <span id="busuanzi_container_site_pv" class="lg:!block">
+                        <span class="text-sm">总访问量</span>
+                        <span id="busuanzi_value_site_pv"></span>
+                    </span>
+                
+            </div>
+        
+        <div class="relative text-center lg:absolute lg:left-[20px] lg:top-1/2 lg:-translate-y-1/2 lg:text-left">
+            <span class="lg:block text-sm">由 <?xml version="1.0" encoding="utf-8"?><!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN" "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd"><svg class="relative top-[2px] inline-block align-baseline" version="1.1" id="圖層_1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px" width="1rem" height="1rem" viewBox="0 0 512 512" enable-background="new 0 0 512 512" xml:space="preserve"><path fill="#0E83CD" d="M256.4,25.8l-200,115.5L56,371.5l199.6,114.7l200-115.5l0.4-230.2L256.4,25.8z M349,354.6l-18.4,10.7l-18.6-11V275H200v79.6l-18.4,10.7l-18.6-11v-197l18.5-10.6l18.5,10.8V237h112v-79.6l18.5-10.6l18.5,10.8V354.6z"/></svg><a target="_blank" class="text-base" href="https://hexo.io">Hexo</a> 驱动</span>
+            <span class="text-sm lg:block">主题&nbsp;<a class="text-base" target="_blank" href="https://github.com/EvanNotFound/hexo-theme-redefine">Redefine v2.9.0</a></span>
+        </div>
+        
+        
+            <div>
+                博客已运行 <span class="odometer" id="runtime_days" ></span> 天 <span class="odometer" id="runtime_hours"></span> 小时 <span class="odometer" id="runtime_minutes"></span> 分钟 <span class="odometer" id="runtime_seconds"></span> 秒
+            </div>
+        
+        
+            <script data-swup-reload-script>
+                try {
+                    function odometer_init() {
+                    const elements = document.querySelectorAll('.odometer');
+                    elements.forEach(el => {
+                        new Odometer({
+                            el,
+                            format: '( ddd).dd',
+                            duration: 200
+                        });
+                    });
+                    }
+                    odometer_init();
+                } catch (error) {}
+            </script>
+        
+        
+        
+    </div>  
+</footer>
+		</div>
+	</div>
+
+	
+	<div class="post-tools">
+		<div class="post-tools-container">
+	<ul class="article-tools-list">
+		<!-- TOC aside toggle -->
+		
+		<li class="right-bottom-tools page-aside-toggle">
+			<i class="fa-regular fa-outdent"></i>
+		</li>
+		
+
+		<!-- go comment -->
+		
+	</ul>
+</div>
+	</div>
+	
+
+	<div class="right-side-tools-container">
+		<div class="side-tools-container">
+	<ul class="hidden-tools-list">
+		<li class="right-bottom-tools tool-font-adjust-plus flex justify-center items-center">
+			<i class="fa-regular fa-magnifying-glass-plus"></i>
+		</li>
+
+		<li class="right-bottom-tools tool-font-adjust-minus flex justify-center items-center">
+			<i class="fa-regular fa-magnifying-glass-minus"></i>
+		</li>
+
+		<li class="right-bottom-tools tool-dark-light-toggle flex justify-center items-center">
+			<i class="fa-regular fa-moon"></i>
+		</li>
+
+		<!-- rss -->
+		
+		<li class="right-bottom-tools rss flex justify-center items-center">
+			<a class="flex justify-center items-center" href="/atom.xml" target="_blank">
+				<i class="fa-regular fa-rss"></i>
+			</a>
+		</li>
+		
+
+		
+
+		<li class="right-bottom-tools tool-scroll-to-bottom flex justify-center items-center">
+			<i class="fa-regular fa-arrow-down"></i>
+		</li>
+	</ul>
+
+	<ul class="visible-tools-list">
+		<li class="right-bottom-tools toggle-tools-list flex justify-center items-center">
+			<i class="fa-regular fa-cog fa-spin"></i>
+		</li>
+		
+		<li class="right-bottom-tools tool-scroll-to-top flex justify-center items-center">
+			<i class="arrow-up fas fa-arrow-up"></i>
+			<span class="percent"></span>
+		</li>
+		
+		
+	</ul>
+</div>
+	</div>
+
+	<div class="image-viewer-container" role="dialog" aria-modal="true" aria-label="图片查看器">
+	<button class="image-viewer-close" type="button" aria-label="关闭">
+		<i class="fa-solid fa-xmark"></i>
+	</button>
+	<button class="image-viewer-prev" type="button" aria-label="上一页">
+		<i class="fa-solid fa-chevron-left"></i>
+	</button>
+	<div class="image-viewer-frame">
+		<img src="" alt="">
+	</div>
+	<div class="image-viewer-exif-panel hidden absolute left-1/2 bottom-20 -translate-x-1/2 w-[min(92vw,420px)] max-h-[60vh] overflow-hidden rounded-2xl bg-background-color-transparent-80 p-4 text-left shadow-redefine-flat backdrop-blur-md" role="dialog" aria-label="EXIF" aria-hidden="true">
+		<div class="flex items-center justify-between mb-3">
+			<span class="text-sm font-semibold text-first-text-color">EXIF</span>
+			<button class="image-viewer-exif-close flex h-8 w-8 items-center justify-center rounded-full bg-background-color-transparent-80 text-first-text-color transition hover:bg-background-color-transparent-40" type="button" aria-label="关闭">
+				<i class="fa-solid fa-xmark text-[0.65rem]"></i>
+			</button>
+		</div>
+		<div class="image-viewer-exif-cards grid grid-cols-1 sm:grid-cols-2 gap-3 max-h-[50vh] overflow-y-auto pr-1 scrollbar-hide"></div>
+		<template class="image-viewer-exif-card-template">
+			<div class="rounded-lg bg-background-color-transparent-40 px-3 py-2">
+				<div class="image-viewer-exif-card-header flex items-center gap-2 mb-1">
+					<i class="image-viewer-exif-card-icon fa-solid fa-circle-info text-xs text-third-text-color"></i>
+					<div class="image-viewer-exif-card-title text-xs font-semibold text-first-text-color"></div>
+				</div>
+				<div class="image-viewer-exif-card-items flex flex-col gap-1"></div>
+			</div>
+		</template>
+	</div>
+	<button class="image-viewer-exif-toggle flex items-center gap-2 hidden absolute left-1/2 bottom-6 -translate-x-1/2 rounded-full border border-border-color bg-background-color-transparent-80 px-4 py-2 text-first-text-color backdrop-blur-md transition hover:bg-background-color-transparent-40" type="button" aria-label="EXIF" aria-expanded="false">
+		<i class="fa-solid fa-circle-info text-xs"></i>
+		<span class="text-xs font-semibold uppercase tracking-wider">EXIF</span>
+	</button>
+	<button class="image-viewer-next" type="button" aria-label="下一页">
+		<i class="fa-solid fa-chevron-right"></i>
+	</button>
+</div>
+
+
+	
+	<div class="search-pop-overlay">
+	<div class="popup search-popup">
+		<div class="search-header">
+			<span class="search-input-field-pre">
+				<i class="fa-solid fa-keyboard"></i>
+			</span>
+			<div class="search-input-container">
+				<input autocomplete="off" autocorrect="off" autocapitalize="off" placeholder="站内搜索您需要的内容..." spellcheck="false" type="search" class="search-input">
+			</div>
+			<span class="popup-btn-close">
+				<i class="fa-solid fa-times"></i>
+			</span>
+		</div>
+		<div id="search-result">
+			<div id="no-result">
+				<i class="fa-solid fa-spinner fa-spin-pulse fa-5x fa-fw"></i>
+			</div>
+		</div>
+	</div>
+</div>
+	
+
+</main>
+
+
+<script  src="https://registry.npmmirror.com/hexo-theme-redefine/2.9.0/files/source/js/build/libs/Swup.min.js" ></script><script  src="https://registry.npmmirror.com/hexo-theme-redefine/2.9.0/files/source/js/build/libs/SwupSlideTheme.min.js" ></script><script  src="https://registry.npmmirror.com/hexo-theme-redefine/2.9.0/files/source/js/build/libs/SwupScriptsPlugin.min.js" ></script><script  src="https://registry.npmmirror.com/hexo-theme-redefine/2.9.0/files/source/js/build/libs/SwupProgressPlugin.min.js" ></script><script  src="https://registry.npmmirror.com/hexo-theme-redefine/2.9.0/files/source/js/build/libs/SwupScrollPlugin.min.js" ></script><script  src="https://registry.npmmirror.com/hexo-theme-redefine/2.9.0/files/source/js/build/libs/SwupPreloadPlugin.min.js" ></script>
+<script>
+    window.swup = new Swup({
+        plugins: [
+            new SwupScriptsPlugin({
+                optin: true,
+            }),
+            new SwupProgressPlugin(),
+            new SwupScrollPlugin({
+                offset: 80,
+            }),
+            new SwupSlideTheme({
+                mainElement: ".main-content-body",
+            }),
+            new SwupPreloadPlugin(),
+        ],
+        containers: ["#swup"],
+    });
+
+    window.dispatchEvent(
+        new CustomEvent("redefine:swup:ready", {
+            detail: {
+                swup: window.swup,
+            },
+        }),
+    );
+</script>
+
+
+
+
+	<script type="module" src="https://registry.npmmirror.com/hexo-theme-redefine/2.9.0/files/source/js/build/main.js" ></script>
+
+
+    <script  src="https://registry.npmmirror.com/hexo-theme-redefine/2.9.0/files/source/js/build/libs/odometer.min.js" ></script>
+    <link rel="stylesheet" href="https://registry.npmmirror.com/hexo-theme-redefine/2.9.0/files/source/assets/odometer-theme-minimal.css">
+
+
+
+
+
+
+  <script  src="https://registry.npmmirror.com/hexo-theme-redefine/2.9.0/files/source/js/build/libs/Typed.min.js" ></script>
+
+
+
+    
+        <script  src="https://registry.npmmirror.com/hexo-theme-redefine/2.9.0/files/source/js/build/libs/mermaid.min.js" ></script>
+    
+
+
+
+
+
+
+<script  src="https://registry.npmmirror.com/hexo-theme-redefine/2.9.0/files/source/js/build/libs/moment-with-locales.min.js" data-swup-reload-script></script>
+
+    <script  src="https://registry.npmmirror.com/hexo-theme-redefine/2.9.0/files/source/js/build/libs/pangu.min.js" ></script>
+
+
+	
+</body>
+
+</html>
